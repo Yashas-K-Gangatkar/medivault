@@ -85,8 +85,8 @@ function renderInline(text: string): React.ReactNode {
   let remaining = text
   let key = 0
   while (remaining.length > 0) {
-    const boldMatch = remaining.match(/^(.*?)\*\*([^*]+)\*\*(.*)$/s)
-    const codeMatch = remaining.match(/^(.*?)`([^`]+)`(.*)$/s)
+    const boldMatch = remaining.match(/^([\s\S]*?)\*\*([^*]+)\*\*([\s\S]*)$/)
+    const codeMatch = remaining.match(/^([\s\S]*?)`([^`]+)`([\s\S]*)$/)
     if (boldMatch && (!codeMatch || (boldMatch.index ?? 0) <= (codeMatch.index ?? 0))) {
       if (boldMatch[1]) parts.push(boldMatch[1])
       parts.push(<strong key={key++}>{boldMatch[2]}</strong>)
