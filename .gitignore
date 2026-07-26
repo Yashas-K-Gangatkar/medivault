@@ -81,6 +81,12 @@ db/*.db-journal
 # Skills directory (local skill files)
 /skills/
 
+# Sandbox template dirs (not part of MEDIVAULT)
+/examples/
+/mini-services/
+/tests/
+/upload/
+
 # OS files
 Thumbs.db
 
