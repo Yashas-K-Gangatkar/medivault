@@ -1,0 +1,590 @@
+/**
+ * MEDIVAULT — Database seed
+ *
+ * All content here is original paraphrasing of publicly available
+ * medical knowledge. Only references to openly licensed / public domain
+ * source books are included (Gray's Anatomy 1918, OpenStax A&P, NCBI
+ * Bookshelf, MedlinePlus, Wikibooks). No copyrighted textbook content
+ * is reproduced — these are learning pointers + original summaries.
+ */
+
+import { db } from '../src/lib/db'
+
+async function main() {
+  console.log('Seeding MEDIVAULT...')
+
+  // DISCIPLINES
+  const disciplines = [
+    { slug: 'anatomy', name: 'Anatomy', description: 'The structural foundation of the human body — from gross dissection to molecular architecture.', icon: 'body', coverImage: '/medivault/disc-anatomy.png' },
+    { slug: 'cardiology', name: 'Cardiology', description: 'The heart, vessels, and circulation — electrophysiology, hemodynamics, and disease.', icon: 'heart', coverImage: '/medivault/disc-cardiology.png' },
+    { slug: 'neurology', name: 'Neurology', description: 'The brain, spinal cord, and peripheral nerves — cognition, motor control, and neural disease.', icon: 'brain', coverImage: '/medivault/disc-neurology.png' },
+    { slug: 'pulmonology', name: 'Pulmonology', description: 'The respiratory system — gas exchange, ventilation, mechanics, and lung disease.', icon: 'lungs', coverImage: '/medivault/disc-pulmonology.png' },
+    { slug: 'nephrology', name: 'Nephrology', description: 'The kidneys and urinary tract — filtration, acid-base, electrolytes, and renal disease.', icon: 'kidney', coverImage: '/medivault/disc-nephrology.png' },
+    { slug: 'biochemistry', name: 'Biochemistry & Endocrine', description: 'The molecular logic of life — metabolism, enzymes, DNA, hormones, and the chemistry of disease.', icon: 'dna', coverImage: '/medivault/disc-biochemistry.png' },
+  ]
+  for (const d of disciplines) {
+    await db.discipline.upsert({ where: { slug: d.slug }, update: d, create: d })
+  }
+  console.log(`Seeded ${disciplines.length} disciplines`)
+
+  // BOOKS — only public domain / openly licensed
+  const books = [
+    {
+      slug: 'grays-anatomy-1918',
+      title: 'Anatomy of the Human Body',
+      author: 'Henry Gray',
+      year: '1918 (20th ed., public domain)',
+      license: 'Public Domain',
+      licenseUrl: 'https://en.wikipedia.org/wiki/Public_domain',
+      sourceUrl: 'https://www.bartleby.com/107/',
+      description: "The classic 1918 edition of Henry Gray's Anatomy of the Human Body — the most famous anatomical reference ever written. Now in the US public domain. Includes 1,247 illustrations and detailed descriptions of every organ system.",
+      coverImage: '/medivault/disc-anatomy.png',
+      disciplineSlug: 'anatomy',
+    },
+    {
+      slug: 'openstax-anatomy-physiology',
+      title: 'Anatomy and Physiology',
+      author: 'OpenStax (J. Betts et al.)',
+      year: '2022 (CC BY 4.0)',
+      license: 'CC BY 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+      sourceUrl: 'https://openstax.org/details/books/anatomy-and-physiology-2e',
+      description: "A peer-reviewed, openly licensed textbook from Rice University's OpenStax project. Covers all major body systems with full-color illustrations, clinical correlations, and review questions. Free to download, adapt, and share.",
+      coverImage: '/medivault/disc-anatomy.png',
+      disciplineSlug: 'anatomy',
+    },
+    {
+      slug: 'openstax-biology-2e',
+      title: 'Biology 2e',
+      author: 'OpenStax (M. Clark et al.)',
+      year: '2020 (CC BY 4.0)',
+      license: 'CC BY 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+      sourceUrl: 'https://openstax.org/details/books/biology-2e',
+      description: "Comprehensive general biology textbook covering the molecular basis of life — including the biochemistry, cell biology, and genetics that underpin modern medicine. Openly licensed and free.",
+      coverImage: '/medivault/disc-biochemistry.png',
+      disciplineSlug: 'biochemistry',
+    },
+    {
+      slug: 'bc-open-pharmacology',
+      title: 'Pharmacology — An Open Textbook',
+      author: 'BCCampus Open Education',
+      year: '2015 (CC BY 4.0)',
+      license: 'CC BY 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+      sourceUrl: 'https://opentextbc.ca/pharmacology/',
+      description: "A complete open pharmacology textbook covering drug classifications, mechanisms of action, pharmacokinetics, and clinical considerations. Freely adaptable under Creative Commons.",
+      coverImage: '/medivault/disc-biochemistry.png',
+      disciplineSlug: 'biochemistry',
+    },
+    {
+      slug: 'wikibooks-human-physiology',
+      title: 'Human Physiology (Wikibooks)',
+      author: 'Wikibooks Community',
+      year: 'Ongoing (CC BY-SA 4.0)',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://en.wikibooks.org/wiki/Human_Physiology',
+      description: "Collaboratively written open textbook covering human physiology — from cell signaling to organ system integration. Continuously updated by a global community of contributors.",
+      coverImage: '/medivault/disc-anatomy.png',
+      disciplineSlug: 'anatomy',
+    },
+    {
+      slug: 'ncbi-mental-health',
+      title: 'Mental Health: Culture, Race, and Ethnicity',
+      author: 'U.S. Surgeon General (NCBI Bookshelf)',
+      year: '2001 (Public Domain, U.S. Gov)',
+      license: 'Public Domain',
+      licenseUrl: 'https://en.wikipedia.org/wiki/Public_domain',
+      sourceUrl: 'https://www.ncbi.nlm.nih.gov/books/NBK44243/',
+      description: "A U.S. Surgeon General supplement exploring cultural dimensions of mental health care. Produced by the federal government and therefore in the public domain. Free to read and reference.",
+      coverImage: '/medivault/disc-neurology.png',
+      disciplineSlug: 'neurology',
+    },
+    {
+      slug: 'medlineplus-encyclopedia',
+      title: 'MedlinePlus Medical Encyclopedia',
+      author: 'U.S. National Library of Medicine',
+      year: 'Continuously updated (Public Domain)',
+      license: 'Public Domain',
+      licenseUrl: 'https://en.wikipedia.org/wiki/Public_domain',
+      sourceUrl: 'https://medlineplus.gov/encyclopedia.html',
+      description: "The NLM's peer-reviewed patient-facing medical encyclopedia. Over 4,000 articles on diseases, tests, symptoms, and treatments. U.S. government work — public domain, freely reusable.",
+      coverImage: '/medivault/disc-cardiology.png',
+      disciplineSlug: 'cardiology',
+    },
+    {
+      slug: 'wikibooks-emergency-medicine',
+      title: 'Emergency Medicine (Wikibooks)',
+      author: 'Wikibooks Community',
+      year: 'Ongoing (CC BY-SA 4.0)',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://en.wikibooks.org/wiki/Emergency_Medicine',
+      description: "Open emergency medicine manual covering ABCDE assessment, trauma, resuscitation, toxicology, and acute presentations. Community-edited and freely shareable.",
+      coverImage: '/medivault/disc-pulmonology.png',
+      disciplineSlug: 'pulmonology',
+    },
+  ]
+  for (const b of books) {
+    const { disciplineSlug, ...bookData } = b
+    const discipline = await db.discipline.findUnique({ where: { slug: disciplineSlug } })
+    await db.book.upsert({ where: { slug: b.slug }, update: { ...bookData, disciplineId: discipline?.id }, create: { ...bookData, disciplineId: discipline?.id } })
+  }
+  console.log(`Seeded ${books.length} books`)
+
+  // TOPICS — 6 topic files included inline (truncated for seed)
+  const topics = [
+    // Cardiology: 3 topics
+    {
+      slug: 'coronary-artery-disease',
+      title: 'Coronary Artery Disease',
+      disciplineSlug: 'cardiology',
+      bookSlug: 'medlineplus-encyclopedia',
+      tldr: 'Atherosclerotic narrowing of the coronary arteries causing ischemia, angina, and potentially myocardial infarction.',
+      overview: 'Coronary artery disease (CAD) is the leading cause of death worldwide. It develops when atherosclerotic plaques accumulate in the walls of the coronary arteries, progressively narrowing the lumen and limiting blood flow to the myocardium. The disease typically develops silently over decades before manifesting as stable angina, unstable angina, or acute myocardial infarction. Risk factors include dyslipidemia, hypertension, diabetes, smoking, obesity, family history, and advancing age. Modern management combines lifestyle modification, statins, antiplatelets, beta-blockers, and revascularization via percutaneous coronary intervention or coronary artery bypass grafting. Early detection through risk stratification and aggressive primary prevention can dramatically reduce mortality.',
+      fullExplanation: "## Pathophysiology\n\nCoronary artery disease begins with endothelial injury, often from turbulent flow, hypertension, hyperlipidemia, or the toxic effects of cigarette smoke. Low-density lipoprotein (LDL) particles infiltrate the injured intima, undergo oxidation, and trigger an inflammatory cascade. Macrophages engulf oxidized LDL and become foam cells, forming the earliest lesion — the fatty streak.\n\nOver time, a fibrous cap forms over a lipid-rich necrotic core. Smooth muscle cells migrate from the media and proliferate, depositing extracellular matrix. Stable plaques cause fixed coronary stenosis and produce stable angina — exertional chest pain that resolves with rest. Vulnerable plaques, however, have thin fibrous caps and large lipid cores; their rupture exposes thrombogenic contents and triggers platelet aggregation and thrombus formation, leading to acute coronary syndromes.\n\n## Clinical Presentation\n\nStable angina presents as retrosternal pressure, tightness, or burning, typically radiating to the left arm, jaw, or neck, provoked by exertion or emotional stress, and relieved within minutes by rest or sublingual nitroglycerin. Acute coronary syndrome presents with similar pain at rest, more severe and prolonged, often accompanied by dyspnea, diaphoresis, nausea, and a sense of doom. Atypical presentations are common in women, the elderly, and diabetics (silent ischemia).\n\n## Diagnostic Workup\n\nThe workup combines risk stratification, functional testing, and anatomical imaging. A resting 12-lead ECG may show ST-T changes, Q waves, or be normal during pain-free periods. Cardiac biomarkers (high-sensitivity troponin) are central to diagnosing myocardial infarction. Stress testing (exercise ECG, stress echocardiography, or nuclear perfusion imaging) detects inducible ischemia. Coronary CT angiography offers non-invasive anatomical assessment, while invasive coronary angiography remains the gold standard and enables concurrent intervention.\n\n## Management\n\nManagement is layered: lifestyle (smoking cessation, Mediterranean diet, 150 min/week of moderate exercise), pharmacotherapy (high-intensity statins to LDL <70 mg/dL, antiplatelet therapy with aspirin, beta-blockers post-MI, ACE inhibitors especially in diabetes or LV dysfunction), and revascularization (PCI for acute STEMI and selected stable disease; CABG for multi-vessel disease, left main, and diabetic patients).",
+      deepDive: "## Advanced Pathophysiology\n\nThe response-to-injury hypothesis remains the dominant model. Endothelial dysfunction — characterized by reduced nitric oxide bioavailability — precedes visible plaque. Nitric oxide is vasoprotective: it inhibits platelet aggregation, vascular smooth muscle proliferation, and adhesion molecule expression. Oxidative stress from NADPH oxidase and uncoupled eNOS degrades NO, accelerating atherogenesis.\n\nPlaque composition matters more than stenosis severity for predicting acute events. The PROSPECT study demonstrated that non-culprit lesions with large plaque burden (>70%), small luminal area (<4.0 mm²), and thin-cap fibroatheroma morphology were the strongest predictors of future events — not the degree of stenosis at angiography. This explains why acute MI often arises from previously insignificant lesions.\n\n## Pharmacotherapy in Depth\n\n**Statins** — Beyond LDL lowering, statins exert pleiotropic effects: they stabilize plaques by reducing inflammation and matrix metalloproteinase activity, improve endothelial function, and reduce thrombosis risk. The 2022 ESC guidelines recommend LDL targets of <1.4 mmol/L (<55 mg/dL) for very high-risk patients, with escalation to ezetimibe and PCSK9 inhibitors (alirocumab, evolocumab) if targets are unmet.\n\n**Antiplatelet therapy** — Aspirin (75-100 mg) irreversibly acetylates COX-1, blocking thromboxane A2 production for the lifespan of the platelet (~10 days). In ACS, dual antiplatelet therapy adds a P2Y12 inhibitor: ticagrelor (preferred, reversible, faster onset) or prasugrel. Clopidogrel remains an option but has variable metabolism due to CYP2C19 polymorphisms.\n\n**Beta-blockers** — Reduce myocardial oxygen demand by lowering heart rate, contractility, and blood pressure. Proven mortality benefit post-MI. Contraindicated in decompensated heart failure, severe asthma, and high-degree AV block.\n\n**ACE inhibitors** — Particularly beneficial in diabetics, LV dysfunction, and anterior MI. The HOPE trial showed ramipril reduced cardiovascular death, MI, and stroke by ~22% in high-risk patients without heart failure.\n\n## Red Flags\n\n- Chest pain at rest lasting >20 minutes — presume ACS until proven otherwise.\n- New ST elevation in 2 contiguous leads — call cath lab immediately; door-to-balloon time <90 minutes.\n- Hemodynamic instability with chest pain — consider cardiogenic shock, mechanical complications (VSD, papillary muscle rupture, free wall rupture).\n- Widened mediastinum on CXR in trauma or severe chest pain — rule out aortic dissection before anticoagulating.\n\n## Open Source Reading\n\n- MedlinePlus Medical Encyclopedia — Coronary Artery Disease (public domain)\n- OpenStax Anatomy & Physiology 2e — Cardiovascular System chapter (CC BY 4.0)\n- Wikibooks Human Physiology — Cardiac cycle and hemodynamics (CC BY-SA 4.0)",
+      heroImage: '/medivault/disc-cardiology.png',
+      tags: JSON.stringify(['ischemia', 'atherosclerosis', 'MI', 'angina']),
+      relatedTopicSlugs: JSON.stringify(['acute-coronary-syndrome', 'hypertension']),
+    },
+    {
+      slug: 'acute-coronary-syndrome',
+      title: 'Acute Coronary Syndrome',
+      disciplineSlug: 'cardiology',
+      bookSlug: 'medlineplus-encyclopedia',
+      tldr: 'A spectrum of acute myocardial ischemia ranging from unstable angina to NSTEMI and STEMI — a time-critical emergency.',
+      overview: 'Acute coronary syndrome (ACS) encompasses unstable angina, non-ST-elevation myocardial infarction (NSTEMI), and ST-elevation myocardial infarction (STEMI). All share a common pathophysiology: rupture or erosion of an atherosclerotic plaque with intraluminal thrombus formation, abruptly reducing coronary blood flow. The distinction rests on the presence of cardiac biomarker elevation (troponin) and ECG changes. STEMI — defined by ST elevation in 2 contiguous leads or new left bundle branch block — mandates immediate reperfusion via primary PCI (door-to-balloon <90 min) or fibrinolysis if PCI is unavailable within 120 minutes. NSTEMI and unstable angina require risk stratification (GRACE, TIMI scores) and an early invasive strategy for high-risk patients.',
+      fullExplanation: "## Classification\n\nACS is classified by ECG and biomarkers:\n- **Unstable angina (UA):** ischemic symptoms + no biomarker elevation + no ST elevation\n- **NSTEMI:** ischemic symptoms + biomarker elevation + no ST elevation\n- **STEMI:** ischemic symptoms + ST elevation in 2 contiguous leads (≥1 mm limb, ≥2 mm precordial) or new LBBB\n\n## Pathophysiology\n\nThe initiating event is plaque rupture or erosion exposing the lipid-rich, thrombogenic core to circulating blood. Platelets adhere via von Willebrand factor and glycoprotein Ib, become activated, and aggregate through GP IIb/IIIa receptors. The coagulation cascade generates thrombin, converting fibrinogen to fibrin and trapping red cells — forming a red thrombus. Partial occlusion produces NSTEMI; complete occlusion produces STEMI with transmural necrosis within 6-12 hours.\n\n## Clinical Assessment\n\nThe classic presentation is severe, prolonged (>20 min) retrosternal chest pain at rest, described as pressure, crushing, or burning, radiating to the left arm, jaw, or back. Associated features include diaphoresis, dyspnea, nausea, vomiting, palpitations, and syncope. Atypical presentations dominate in women, elderly, and diabetics — epigastric pain, fatigue, or confusion may be the only clue.\n\nA 12-lead ECG should be obtained within 10 minutes of arrival. Cardiac biomarkers (high-sensitivity troponin) are drawn at baseline and 1-3 hours later. Echocardiography assesses wall motion abnormalities and mechanical complications.\n\n## Initial Management\n\nThe evidence-based bundle is:\n- Aspirin 300 mg chewed\n- P2Y12 inhibitor (ticagrelor 180 mg loading or prasugrel 60 mg)\n- Anticoagulation (unfractionated heparin, enoxaparin, or bivalirudin)\n- High-intensity statin\n- Oxygen only if SpO2 <90%\n- Nitrate for pain; morphine if refractory\n- Beta-blocker if no contraindication\n\n## Reperfusion Strategy\n\nFor STEMI, primary PCI is preferred if achievable within 120 minutes of first medical contact. If delayed, fibrinolysis (tenecteplase, alteplase) within 30 minutes of arrival. For NSTEMI, an early invasive strategy (within 24 hours) is recommended for high-risk patients (GRACE >140, dynamic ST changes, refractory angina, hemodynamic instability).",
+      deepDive: "## ECG Patterns in Depth\n\n**STEMI equivalents** that mandate urgent reperfusion:\n- Isolated posterior MI: V1-V3 ST depression with tall R waves and upright T waves; confirm with posterior leads V7-V9.\n- Left bundle branch block (new or presumed new): Sgarbossa criteria.\n- De Winter T waves: upsloping ST depression in precordial leads with tall, symmetric T waves — LAD occlusion.\n- Hyperacute T waves: broad-based, tall T waves preceding ST elevation — earliest ECG sign.\n\n## Biomarker Kinetics\n\nHigh-sensitivity troponin assays detect myocardial injury at the 99th percentile upper reference limit. The 0/1-hour algorithm (ESC) uses baseline and 1-hour values to rule-in, rule-out, or observe. Rise and/or fall distinguishes acute from chronic injury. Causes other than ACS include PE, sepsis, heart failure, renal failure, myocarditis, and tachyarrhythmias.\n\n## Risk Stratification\n\n**GRACE score** (age, heart rate, systolic BP, creatinine, Killip class, cardiac arrest at admission, ST deviation, abnormal biomarkers) predicts in-hospital and 6-month mortality and guides invasive timing. **TIMI score** (7 variables) is simpler but less powerful. **CRUSADE score** quantifies bleeding risk and informs antithrombotic choices.\n\n## Mechanical Complications\n\nOccur 3-7 days post-MI as necrotic myocardium softens:\n- Ventricular septal rupture: new pansystolic murmur at lower sternal border, harsh, with thrill.\n- Papillary muscle rupture (more often posteromedial): acute severe mitral regurgitation, pulmonary edema.\n- Free wall rupture: sudden cardiac tamponade, pulseless electrical activity — usually fatal.\n- LV aneurysm: weeks to months later; ST elevation that persists, ventricular arrhythmias, mural thrombus.\n\n## Cardiogenic Shock\n\nDefined as hypotension (SBP <90) with end-organ hypoperfusion and adequate filling pressure. The SHOCK trial established that emergency revascularization (PCI or CABG) within 18 hours improves 6-month and long-term survival. Mechanical circulatory support (IABP, Impella, VA-ECMO) bridges to recovery or definitive therapy.\n\n## Post-MI Care\n\n- DAPT duration: 12 months standard; consider shorter if high bleeding risk, longer if prior stent thrombosis.\n- Lipid target: LDL <55 mg/dL (1.4 mmol/L); add ezetimibe then PCSK9 inhibitor if unmet.\n- Beta-blocker: lifelong if LV dysfunction; otherwise at least 1-3 years.\n- ACE inhibitor/ARB: all patients with LV dysfunction, diabetes, hypertension, CKD.\n- Cardiac rehabilitation: supervised exercise, education, psychosocial support — reduces mortality 20-25%.\n\n## Open Source Reading\n\n- MedlinePlus Encyclopedia — Heart Attack (Public Domain, US NLM)\n- OpenStax A&P 2e — Cardiac Conduction and Hemodynamics (CC BY 4.0)\n- Wikibooks Emergency Medicine — Chest Pain and ACS chapter (CC BY-SA 4.0)",
+      heroImage: '/medivault/disc-cardiology.png',
+      tags: JSON.stringify(['MI', 'STEMI', 'NSTEMI', 'emergency']),
+      relatedTopicSlugs: JSON.stringify(['coronary-artery-disease', 'hypertension']),
+    },
+    {
+      slug: 'hypertension',
+      title: 'Hypertension',
+      disciplineSlug: 'cardiology',
+      bookSlug: 'medlineplus-encyclopedia',
+      tldr: 'Sustained elevation of arterial blood pressure — the leading modifiable risk factor for cardiovascular and cerebrovascular disease globally.',
+      overview: 'Hypertension affects over 1.4 billion adults worldwide and is the single largest contributor to global mortality among modifiable risk factors. Defined by office blood pressure ≥140/90 mmHg (or ≥130/80 mmHg per ACC/AHA 2017), it is usually asymptomatic until end-organ damage appears: stroke, myocardial infarction, heart failure, chronic kidney disease, retinopathy, and aortic dissection. Over 90% of cases are primary (essential), driven by aging, obesity, sodium intake, alcohol, and genetic predisposition. Secondary causes (renal artery stenosis, primary aldosteronism, pheochromocytoma, OSA) should be sought in young patients, resistant hypertension, or with suggestive features. Management combines lifestyle modification (DASH diet, sodium reduction, exercise, weight loss) with stepped pharmacotherapy — typically ACE inhibitor or ARB, calcium channel blocker, and thiazide-like diuretic.',
+      fullExplanation: "## Definition and Classification\n\n| Category | Systolic | Diastolic |\n|----------|----------|-----------|\n| Normal (ESC/ESH) | <120 | <80 |\n| High-normal | 120-129 | 80-84 |\n| Grade 1 Hypertension | 130-139 | 85-89 |\n| Grade 2 Hypertension | 140-159 | 90-99 |\n| Grade 3 Hypertension | ≥160 | ≥100 |\n| Isolated Systolic HTN | ≥140 | <90 |\n\nACC/AHA 2017 reclassified ≥130/80 as hypertension — a more aggressive threshold emphasizing total cardiovascular risk.\n\n## Diagnosis\n\nDiagnosis requires elevated BP on at least 2 separate visits, or 24-hour ambulatory monitoring (ABPM) / home BP monitoring (HBPM) showing average ≥135/85. White-coat hypertension (elevated office, normal ABPM) and masked hypertension (normal office, elevated ABPM) are common — ABPM is the gold standard.\n\nFundoscopic exam (hypertensive retinopathy — Keith-Wagener-Barker classification), cardiac exam (LV heave, S4), abdominal exam (renal bruits), and peripheral pulses complete the initial assessment.\n\n## Workup\n\nBaseline tests: ECG (LVH, strain pattern), basic metabolic panel (renal function, electrolytes — hypokalemia suggests aldosteronism), fasting glucose/HbA1c, lipid panel, urinalysis (proteinuria), and TSH. Optional: echocardiogram (LVH, diastolic dysfunction), urine albumin-to-creatinine ratio.\n\n## Treatment Thresholds\n\n- Stage 1 + high cardiovascular risk (≥10% 10-year ASCVD risk, diabetes, CKD, established CVD): drug therapy.\n- Stage 2 (≥140/90): drug therapy for all.\n- Target: <130/80 for most; <140/90 acceptable in elderly/frail.\n\n## Pharmacotherapy\n\nThe **ACCOMPLISH, PATHWAY-2** and **ESCAPE** trials underpin modern combination therapy:\n- ACE inhibitor or ARB — first-line, especially with diabetes, CKD, proteinuria\n- Calcium channel blocker (amlodipine, nifedipine LA) — first-line, especially in Black patients and elderly\n- Thiazide-like diuretic (chlorthalidone preferred over HCTZ) — first-line, especially with heart failure\n- Resistant hypertension: add spironolactone (PATHWAY-2 showed superiority over bisoprolol or doxazosin)\n- Fourth-line: beta-blocker, alpha-blocker, alpha-2 agonist, direct vasodilator",
+      deepDive: "## Pathophysiology of Essential Hypertension\n\nHypertension is not a single disease but a final common pathway of multiple overlapping mechanisms. The Guyton hypothesis emphasizes the kidney's role: long-term BP control depends on pressure natriuresis — the ability of the kidney to excrete sodium and water at a given perfusion pressure. In essential hypertension, this curve shifts rightward, requiring higher pressure to maintain sodium balance.\n\n**Sympathetic overactivity** — particularly in young, lean hypertensives — increases cardiac output and vascular tone. The renin-angiotensin-aldosterone system (RAAS) drives vasoconstriction (angiotensin II) and sodium retention (aldosterone). **Vascular remodeling** — increased wall-to-lumen ratio — amplifies the vasoconstrictor response to any stimulus (Laplace's law).\n\n**Sodium sensitivity** affects ~50% of hypertensives. Excess dietary sodium expands extracellular volume and directly stiffens vessels via endothelial dysfunction. **Potassium** antagonizes sodium effects: the DASH trial demonstrated BP reduction with high-potassium, low-sodium diets independent of weight loss.\n\n## Secondary Hypertension — When to Suspect\n\nSuspect secondary causes when:\n- Age <30 with no family history or >55 with new-onset\n- Resistant hypertension (≥3 drugs including diuretic, uncontrolled)\n- Severe or accelerated (≥180/120) or malignant (with retinopathy/encephalopathy)\n- Hypokalemia spontaneously or with low-dose diuretic\n- Abdominal bruit, episodic headache/pallor/sweating (pheochromocytoma), snoring (OSA)\n- Renal function decline on ACE inhibitor\n\n**Workup by suspected cause:**\n- Primary aldosteronism: ARR (aldosterone:renin ratio) >30 with suppressed renin.\n- Renal artery stenosis: renal Doppler US, MRA, or CT angiography.\n- Pheochromocytoma: 24-hour urine fractionated metanephrines or plasma free metanephrines.\n- OSA: STOP-BANG screening, polysomnography confirmation.\n- Cushing's: 24-hour urine cortisol, dexamethasone suppression, late-night salivary cortisol.\n\n## Hypertensive Emergencies\n\nDefined as severe BP elevation with acute end-organ damage. Requires IV therapy in monitored setting:\n- Malignant HTN with encephalopathy: labetalol, nicardipine, clevidipine\n- Aortic dissection: esmolol first (reduce shear force) then nicardipine; target SBP <120 within 20 min\n- Eclampsia: IV magnesium sulfate, hydralazine or labetalol\n- Pheochromocytoma crisis: phentolamine, nitroprusside — avoid beta-blockers alone (unopposed alpha)\n\nHypertensive urgency (severe BP, no end-organ damage): oral therapy, gradual reduction over 24-48 hours. Aggressive lowering risks ischemic stroke/MI due to autoregulation shift.\n\n## Drug Mechanisms in Depth\n\n**ACE inhibitors** (lisinopril, ramipril) block conversion of angiotensin I to II, also preventing bradykinin breakdown (cause of dry cough, ~10% prevalence). **ARBs** (losartan, valsartan) block AT1 receptors directly, avoiding bradykinin accumulation — substitute when ACE-induced cough occurs. Both reduce proteinuria and slow CKD progression but are contraindicated in bilateral renal artery stenosis and pregnancy.\n\n**Calcium channel blockers** — dihydropyridines (amlodipine) act on vascular smooth muscle; non-dihydropyridines (verapamil, diltiazem) on heart rate and conduction. Combination of DHP-CCB with ACE inhibitor (ACCOMPLISH trial) reduced CV events more than ACE + thiazide in high-risk patients.\n\n**Thiazide-like diuretics** — chlorthalidone (12.5-25 mg) and indapamide (1.25-2.5 mg) have stronger outcome data and longer duration than HCTZ. Monitor sodium, potassium, uric acid (gout flare), calcium (mild hypercalcemia).\n\n**Aldosterone antagonists** — spironolactone 25-50 mg is the most effective 4th agent in resistant hypertension (PATHWAY-2). Eplerenone has less gynecomastia but is more expensive and less potent.\n\n## Red Flags\n\n- BP >180/120 with headache, chest pain, visual disturbance, or neuro deficit — hypertensive emergency\n- Widened mediastinum on CXR + severe chest/back pain — aortic dissection until proven otherwise\n- New severe headache + BP elevation in pregnancy >20 weeks — preeclampsia; check urine protein, platelets, LFTs\n- Refractory hypokalemia despite potassium supplementation — think aldosteronism\n- Acute kidney injury on starting ACE inhibitor — bilateral renal artery stenosis until proven otherwise\n\n## Open Source Reading\n\n- MedlinePlus Encyclopedia — High Blood Pressure (Public Domain)\n- OpenStax A&P 2e — Blood Vessels and Circulation (CC BY 4.0)\n- Wikibooks Human Physiology — Renal regulation of BP (CC BY-SA 4.0)",
+      heroImage: '/medivault/disc-cardiology.png',
+      tags: JSON.stringify(['BP', 'risk-factor', 'RAAS', 'lifestyle']),
+      relatedTopicSlugs: JSON.stringify(['coronary-artery-disease']),
+    },
+    // Neurology: ischemic stroke
+    {
+      slug: 'ischemic-stroke',
+      title: 'Ischemic Stroke',
+      disciplineSlug: 'neurology',
+      bookSlug: 'medlineplus-encyclopedia',
+      tldr: 'Sudden focal neurological deficit from cerebral arterial occlusion — "time is brain" with windows for thrombolysis and thrombectomy.',
+      overview: 'Ischemic stroke accounts for ~85% of all strokes and is the second leading cause of death worldwide. It occurs when a cerebral artery is occluded by thromboembolism (often from atrial fibrillation, carotid stenosis, or atherosclerosis) or, less commonly, by in-situ thrombosis in a small penetrating vessel (lacunar stroke). Clinical presentation depends on the vascular territory: anterior cerebral (leg weakness), middle cerebral (face and arm weakness, aphasia in dominant hemisphere, neglect in non-dominant), posterior cerebral (visual field defects), and vertebrobasilar (brainstem signs, ataxia, diplopia). Rapid recognition via the FAST/BE-FAST acronym and immediate neuroimaging (non-contrast CT to exclude hemorrhage) are essential. IV thrombolysis with alteplase or tenecteplase within 4.5 hours of symptom onset, and mechanical thrombectomy for large-vessel anterior circulation occlusion within 6-24 hours based on imaging mismatch, dramatically improve outcomes.',
+      fullExplanation: "## Definition and Classification\n\nStroke is an acute neurological deficit caused by disruption of cerebral blood flow. Ischemic stroke results from arterial occlusion; hemorrhagic stroke from vessel rupture. The TOAST classification categorizes ischemic stroke:\n- Large-artery atherosclerosis (carotid, vertebral, basilar)\n- Cardioembolism (atrial fibrillation, valve disease, post-MI mural thrombus)\n- Small-vessel occlusion (lacunar — chronic HTN/diabetes)\n- Other determined cause (dissection, vasculitis, hypercoagulable state)\n- Undetermined (cryptogenic)\n\n## Pathophysiology\n\nCerebral blood flow (CBF) averages 50 mL/100g/min. Below 20 mL/100g/min, neuronal function ceases (the ischemic penumbra) but cells remain viable for hours — the target of all acute therapy. Below 10 mL/100g/min, irreversible infarction (the ischemic core) occurs within minutes.\n\nThe ischemic cascade: energy failure → loss of ionic gradients → glutamate release → calcium influx → activation of proteases and lipases → mitochondrial damage → oxidative stress → apoptosis and necrosis.\n\n## Clinical Assessment\n\nThe NIH Stroke Scale (NIHSS) quantifies deficit severity (0-42) and guides therapy. A score ≥6 suggests large-vessel occlusion amenable to thrombectomy.\n\nVascular syndromes:\n- MCA (M1 occlusion): contralateral face/arm > leg weakness, gaze deviation toward lesion, homonymous hemianopia, aphasia (dominant), neglect (non-dominant)\n- ACA: contralateral leg > arm weakness, urinary incontinence, abulia\n- PCA: contralateral homonymous hemianopia with macular sparing\n- Lacunar (pure motor, pure sensory, ataxic hemiparesis, dysarthria-clumsy hand): small penetrating vessel, good prognosis\n\n## Imaging\n\nNon-contrast CT — first test, excludes hemorrhage. Early ischemia signs: hyperdense MCA sign, loss of insular ribbon, effacement of sulci.\nCT angiography — identifies large-vessel occlusion (LVO) for thrombectomy candidacy.\nCT perfusion or MRI DWI/PWI — defines core vs penumbra, extends thrombectomy window to 24 hours (DAWN, DEFUSE-3 criteria).\n\n## Acute Treatment\n\n- IV thrombolysis (alteplase 0.9 mg/kg, max 90 mg; 10% bolus, rest over 60 min) within 4.5 hours of onset (or last known well). Tenecteplase (0.25 mg/kg single bolus) is non-inferior and increasingly preferred.\n- Mechanical thrombectomy for anterior circulation LVO: within 6 hours direct, or 6-24 hours with imaging mismatch (DAWN, DEFUSE-3).\n- Supportive care: BP <185/110 before lysis, <180/105 after; glucose 140-180; temperature ≤37.5°C; swallow screen before anything by mouth.",
+      deepDive: "## Thrombolysis in Depth\n\nThe NINDS trial (1995) established alteplase benefit within 3 hours; ECASS III (2008) extended to 4.5 hours. EXTEND, ECASS IV, EPITHET support selected patients up to 9 hours with CT perfusion mismatch, and WAKE-UP supports lysis for wake-up strokes with MRI DWI/FLAIR mismatch.\n\nAbsolute contraindications include intracranial hemorrhage, subarachnoid hemorrhage suspicion, active internal bleeding, recent intracranial/intraspinal surgery, serious head trauma within 3 months, intracranial neoplasm/AVM/aneurysm, bleeding diathesis, current severe uncontrolled HTN (>185/110).\n\nSymptomatic intracranial hemorrhage occurs in ~6% of lytics vs 1% placebo — but the mortality benefit outweighs this risk when appropriately selected.\n\n## Thrombectomy — Landmark Trials\n\nMR CLEAN, ESCAPE, EXTEND-IA, SWIFT-PRIME, REVASCAT (2015) established thrombectomy within 6 hours for LVO with proven benefit (NNT ~3 for functional independence). DAWN and DEFUSE-3 (2018) extended the window to 24 hours using perfusion imaging mismatch. The DIRECT-MT and SKIP trials showed direct-to-thrombectomy (skipping lysis) is non-inferior in selected patients.\n\n## Secondary Prevention by Stroke Subtype\n\n**Large-artery atherosclerosis:**\n- Antiplatelet: aspirin 81 mg + clopidogrel 75 mg for 21 days, then monotherapy (CHANCE, POINT trials)\n- High-intensity statin (atorvastatin 80 mg per SPARCL)\n- Carotid endarterectomy for symptomatic stenosis >50% (NASCET); stenting if surgical high-risk\n\n**Cardioembolic (atrial fibrillation):**\n- Anticoagulation: direct oral anticoagulants (apixaban, rivaroxaban, dabigatran) preferred over warfarin (RE-LY, ROCKET-AF, ARISTOTLE)\n- Timing: 3-6 days post-stroke (1-2 weeks for large strokes) to avoid hemorrhagic transformation; the 1-3-6-12 rule (1 day TIA, 3 days minor, 6 days moderate, 12 days major)\n- LAA closure (Watchman device) for patients unable to tolerate long-term anticoagulation\n\n**Lacunar:**\n- Antiplatelet monotherapy\n- Aggressive vascular risk factor control (HTN, diabetes, lipids)\n- Lifestyle: smoking cessation is critical\n\n**Cryptogenic with PFO:**\n- PFO closure in patients 18-60 with deep venous anomalies (RESPECT, REDUCE, CLOSE trials)\n\n## Stroke Unit Care\n\nAdmission to a dedicated stroke unit reduces mortality and disability more than any single medication. Components:\n- Frequent neuro checks (NIHSS q1h initially)\n- DVT prophylaxis (LMWH unless contraindicated)\n- Fever and glucose control\n- Early mobilization (after 24h if stable)\n- Swallow assessment before any oral intake (dysphagia in 50%)\n- Speech-language evaluation\n- Early rehabilitation (PT, OT)\n- Mood and cognition screening (PHQ-9, MoCA)\n\n## Red Flags\n\n- Sudden \"worst headache of life\" — subarachnoid hemorrhage; CT then LP if negative\n- On anticoagulant + sudden focal deficit — intracerebral hemorrhage; reverse anticoagulation immediately\n- Fluctuating deficit or progressive worsening — stroke-in-evolution; consider hemorrhagic transformation or progressive thrombosis\n- Bilateral brainstem signs — vertebrobasilar occlusion; immediate CTA and consider thrombectomy\n- Seizure at stroke onset — consider postictal Todd's paresis; may still thrombolyze if clear deficit and imaging consistent with stroke\n\n## Open Source Reading\n\n- MedlinePlus Encyclopedia — Stroke (Public Domain)\n- NCBI Bookshelf: Mental Health: Culture, Race, Ethnicity — for stroke disparities\n- Wikibooks Emergency Medicine — Stroke chapter (CC BY-SA 4.0)",
+      heroImage: '/medivault/disc-neurology.png',
+      tags: JSON.stringify(['brain', 'embolism', 'thrombolysis', 'thrombectomy', 'emergency']),
+      relatedTopicSlugs: JSON.stringify(['hypertension']),
+    },
+    // Pulmonology: COPD
+    {
+      slug: 'copd',
+      title: 'Chronic Obstructive Pulmonary Disease',
+      disciplineSlug: 'pulmonology',
+      bookSlug: 'medlineplus-encyclopedia',
+      tldr: 'Progressive, largely irreversible airflow limitation from chronic bronchitis and emphysema — primarily smoking-related.',
+      overview: 'COPD is the third leading cause of death globally, affecting over 300 million people. It is characterized by persistent, progressive airflow limitation caused by an abnormal inflammatory response of the lung to noxious particles or gases — overwhelmingly cigarette smoke in developed nations, biomass fuel in developing countries. Pathologically, chronic bronchitis (airway inflammation, mucus hypersecretion) and emphysema (destruction of alveolar septa with loss of elastic recoil) coexist in most patients. Clinical features include chronic productive cough, exertional dyspnea, wheeze, and frequent exacerbations. Diagnosis requires spirometry showing post-bronchodilator FEV1/FVC <0.7. Management combines smoking cessation, inhaled bronchodilators (LAMA/LABA), inhaled corticosteroids for eosinophilic phenotype, pulmonary rehabilitation, supplemental oxygen for severe hypoxemia, and vaccination. Acute exacerbations, often triggered by infection or air pollution, are managed with bronchodilators, systemic corticosteroids, antibiotics, and oxygen titrated to target saturations 88-92%.',
+      fullExplanation: "## Pathophysiology\n\nCOPD involves an exaggerated inflammatory response to inhaled toxins. Neutrophils, macrophages, and CD8+ T lymphocytes release proteases (elastase, MMP-9, cathepsins) that degrade elastin in alveolar walls — causing emphysema — and stimulate mucus hypersecretion (chronic bronchitis). The protease-antiprotease imbalance is central: alpha-1 antitrypsin deficiency (1-2% of COPD) causes early-onset, lower-lobe predominant emphysema.\n\nLoss of elastic recoil and small airway collapse during expiration cause airflow limitation and air trapping (hyperinflation), the main driver of exertional dyspnea. Dynamic hyperinflation during exercise worsens symptoms — the rationale for bronchodilators that reduce operating lung volumes.\n\n## Diagnosis\n\nSpirometry is mandatory: post-bronchodilator FEV1/FVC <0.70 confirms persistent airflow limitation.\n\nGOLD Grade by FEV1 (% predicted):\n- Grade 1 (Mild): ≥80%\n- Grade 2 (Moderate): 50-79%\n- Grade 3 (Severe): 30-49%\n- Grade 4 (Very severe): <30%\n\nGOLD ABE assessment (2022) uses exacerbation history to guide therapy:\n- Group A: 0-1 exacerbations not leading to hospitalization, mMRC 0-1 or CAT <10\n- Group B: 0-1 exacerbations, mMRC ≥2 or CAT ≥10\n- Group E: ≥2 exacerbations or ≥1 leading to hospitalization\n\n## Differential Diagnosis\n\nAsthma (early onset, variable symptoms, atopy, reversible airflow limitation), bronchiectasis (recurrent infection, purulent sputum, CT shows airway dilation), tuberculosis (cough >2 weeks, hemoptysis, weight loss, endemic exposure), heart failure (orthopnea, PND, bibasilar crackles, elevated BNP), lung cancer (weight loss, hemoptysis, smoking history).\n\n## Management\n\n**Non-pharmacologic:**\n- Smoking cessation (most effective intervention) — nicotine replacement, varenicline, bupropion, behavioral therapy\n- Pulmonary rehabilitation (6-8 weeks of exercise training, education, psychosocial support) — improves dyspnea, exercise tolerance, quality of life\n- Vaccinations: influenza annually, pneumococcal (PCV20 or PCV15 + PPSV23), COVID-19\n- Long-term oxygen therapy (LTOT) if PaO2 ≤55 mmHg or SpO2 ≤88% — improves survival\n\n**Pharmacologic:**\n- Group A: short-acting bronchodilator PRN\n- Group B: LABA + LAMA (e.g., indacaterol/glycopyrrolate, formoterol/umeclidinium)\n- Group E: LABA + LAMA; consider LABA+LAMA+ICS if eos ≥300 (asthma-COPD overlap)\n- ICS addition: blood eos ≥300 (high benefit) or 100-300 with exacerbations; avoid if <100 (pneumonia risk)\n\n## Exacerbation Management\n\n- Bronchodilators: SABA + SAMA via nebulizer or MDI with spacer\n- Systemic corticosteroids: prednisone 40 mg x 5 days (REDUCE trial)\n- Antibiotics if increased sputum purulence/volume or need for mechanical ventilation (amoxicillin-clavulanate, doxycycline, macrolide)\n- Oxygen: target SpO2 88-92% (avoid hyperoxia — CO2 retainer physiology)\n- Non-invasive ventilation (NIV) for respiratory acidosis (pH <7.35) — first-line, reduces mortality",
+      deepDive: "## Advanced Pathophysiology — The Acinar Unit\n\nThe respiratory acinus (respiratory bronchiole + alveolar ducts + alveoli) is the functional unit of gas exchange. Centriacinar emphysema (smoking-related) affects the respiratory bronchioles, predominantly upper lobes. Panacinar emphysema (alpha-1 antitrypsin deficiency) involves the entire acinus, lower lobe predominant. Paraseptal emphysema affects distal acinus adjacent to pleura, can cause spontaneous pneumothorax in young men.\n\nSmall airway disease (bronchiolitis) is increasingly recognized as the major site of airflow limitation. Thickened, fibrotic, narrowed bronchioles contribute disproportionately to FEV1 decline — a target for novel anti-inflammatory therapies.\n\nPulmonary vascular remodeling occurs early: hypoxic vasoconstriction, intimal thickening, smooth muscle hypertrophy. Progressive pulmonary hypertension leads to right ventricular hypertrophy and cor pulmonale.\n\n## Phenotypes and Endotypes\n\n**Frequent exacerbator phenotype** — ≥2 exacerbations/year — has accelerated FEV1 decline, worse quality of life, and higher mortality. The ECLIPSE cohort showed exacerbation frequency is a stable trait.\n\n**Eosinophilic COPD** — blood eos ≥300 — responds to ICS addition and to anti-IL-5 biologics (limited evidence). Likely represents asthma-COPD overlap (ACO).\n\n**Chronic bronchitis phenotype** — chronic productive cough for ≥3 months in 2 successive years. Roflumilast (PDE4 inhibitor) reduces exacerbations in severe chronic bronchitis. Macrolide prophylaxis (azithromycin 250 mg 3x/week) reduces exacerbation frequency — weigh QTc prolongation, antimicrobial resistance.\n\n## Alpha-1 Antitrypsin Deficiency\n\nUnder-recognized cause of COPD. AAT is a serpin (serine protease inhibitor) that inhibits neutrophil elastase. PiZZ genotype causes severe deficiency (levels <11 μM); PiMZ is intermediate. Suspect in: COPD <45 years, lower-lobe predominant emphysema, family history, extrapulmonary features (liver disease, panniculitis). Augmentation therapy (weekly IV AAT) slows lung function decline in ZZ individuals with FEV1 35-65% predicted.\n\n## Oxygen Therapy — Mechanistic Basis\n\nThe Nocturnal Oxygen Therapy Trial (NOTT, 1980) and Medical Research Council (MRC, 1981) established that LTOT ≥15 hours/day (ideally 24 hours) improves survival in severe hypoxemic COPD. Benefits derive from:\n- Reduced pulmonary vasoconstriction → decreased cor pulmonale\n- Reduced erythropoietin drive → decreased polycythemia\n- Reduced sympathetic tone → decreased cardiac workload\n\n## Non-Invasive Ventilation in Acute Exacerbation\n\nNIV is the single most effective intervention for acute COPD exacerbation with respiratory acidosis. The BORG scale (perceived dyspnea) and ABG guide initiation. Settings: IPAP 10-15 cm H2O titrated to pH normalization, EPAP 4-5 cm H2O. Contraindications: cardiac/arrhythmic arrest, unable to protect airway, facial trauma, agitation.\n\nReduces mortality by ~50%, intubation rate by ~60% in selected patients.\n\n## Red Flags\n\n- Acute severe dyspnea with unilateral absent breath sounds and tracheal deviation — tension pneumothorax (high risk in severe emphysema); needle decompress immediately\n- Massive hemoptysis — consider bronchial artery embolization; protect contralateral lung with selective intubation\n- New severe headache, vision change, confusion in COPD on chronic oxygen — consider hypercapnia with papilledema; check ABG\n- Refractory hypoxemia despite high-flow oxygen — consider coexisting pneumonia, PE, or pneumothorax\n- Acute cor pulmonale: hypoxemia, peripheral edema, elevated JVP — evaluate for pulmonary embolism and worsening pulmonary hypertension\n\n## Evidence & References\n\n1. GOLD 2023 Report — current global COPD guidance\n2. NOTT, MRC — long-term oxygen therapy\n3. REDUCE — 5-day prednisone course\n4. ECLIPSE cohort — exacerbation phenotyping\n5. TORCH, UPLIFT — bronchodilator outcome trials\n6. IMPACT, ETHOS — triple inhaler therapy\n\n## Open Source Reading\n\n- MedlinePlus Encyclopedia — COPD (Public Domain)\n- OpenStax A&P 2e — Respiratory System chapter (CC BY 4.0)\n- Wikibooks Human Physiology — Respiratory mechanics (CC BY-SA 4.0)",
+      heroImage: '/medivault/disc-pulmonology.png',
+      tags: JSON.stringify(['lung', 'smoking', 'exacerbation', 'NIV']),
+      relatedTopicSlugs: JSON.stringify([]),
+    },
+    // Nephrology: AKI
+    {
+      slug: 'aki',
+      title: 'Acute Kidney Injury',
+      disciplineSlug: 'nephrology',
+      bookSlug: 'medlineplus-encyclopedia',
+      tldr: 'Rapid decline in renal function over hours-days — classify pre-renal, intrinsic, post-renal; correct reversible causes urgently.',
+      overview: 'Acute kidney injury (AKI) is defined as a rapid (hours to days) decline in kidney function manifesting as rise in serum creatinine, fall in urine output, or both. The KDIGO criteria require ≥0.3 mg/dL rise in 48h, ≥1.5x baseline in 7 days, or urine output <0.5 mL/kg/h for 6+ hours. AKI is common — affecting 1 in 5 hospital admissions and >50% of ICU patients — and is independently associated with increased mortality. Etiology is traditionally divided into pre-renal (volume depletion, heart failure, sepsis), intrinsic (acute tubular necrosis, glomerulonephritis, interstitial nephritis), and post-renal (obstruction). Most cases are pre-renal/ATN continuum from hypoperfusion. Management focuses on treating the underlying cause, avoiding nephrotoxins, optimizing hemodynamics, and renal replacement therapy when indications arise (refractory hyperkalemia, acidosis, volume overload, uremia).',
+      fullExplanation: "## Definition (KDIGO)\n\n| Stage | Serum Creatinine | Urine Output |\n|-------|-----------------|--------------|\n| 1 | ↑≥0.3 mg/dL or ↑1.5-1.9x baseline | <0.5 mL/kg/h x 6-12 h |\n| 2 | ↑2.0-2.9x baseline | <0.5 mL/kg/h x ≥12 h |\n| 3 | ↑≥3x baseline or ≥4.0 mg/dL or RRT | <0.3 mL/kg/h x ≥24 h or anuria ≥12 h |\n\n## Etiology — The Pre/Intrinsic/Post Framework\n\n**Pre-renal (most common, ~60%):**\n- Volume depletion: hemorrhage, GI loss (vomiting, diarrhea), burns, diuretics\n- Decreased effective circulating volume: heart failure, cirrhosis, nephrotic syndrome, sepsis (vasodilation)\n- Renal artery disease: stenosis, embolism\n\n**Intrinsic:**\n- Vascular: vasculitis, malignant HTN, TTP-HUS, cholesterol emboli\n- Glomerular (GN): post-streptococcal, IgA nephropathy, RPGN (anti-GBM, ANCA-associated)\n- Tubulointerstitial: acute tubular necrosis (most common intrinsic — ischemic or nephrotoxic), acute interstitial nephritis (β-lactams, PPIs, NSAIDs, sulfonamides)\n- Tubular: crystal nephropathy (acyclovir, indinavir), myoglobinuria (rhabdomyolysis), hemoglobinuria\n\n**Post-renal (5-10%):**\n- BPH, prostate cancer, cervical cancer\n- Nephrolithiasis (bilateral or single kidney)\n- Retroperitoneal fibrosis\n- Neurogenic bladder\n\n## Clinical Assessment\n\nHistory: volume loss, nephrotoxin exposure, recent infections, comorbidities. Physical: volume status (JVP, skin turgor, edema, orthostatic vitals), bladder catheterization for output + post-void residual.\n\n**Urinalysis** is the most helpful initial test:\n- Bland sediment + high osmolality, low Na → pre-renal\n- Muddy brown granular casts → ATN\n- RBC casts, dysmorphic RBCs → glomerulonephritis\n- WBC casts → interstitial nephritis\n- Crystals → crystal nephropathy\n\n**Fractional excretion of sodium (FENa):** <1% suggests pre-renal; >2% suggests ATN. Caveat: diuretics falsely elevate FENa — use FEurea <35% in this case.\n\n**Renal ultrasound** excludes obstruction and assesses kidney size (small kidneys suggest chronic disease).\n\n## Management Principles\n\n1. Treat underlying cause: fluids for hypovolemia, stop nephrotoxins, treat sepsis, relieve obstruction\n2. Optimize hemodynamics: MAP ≥65 mmHg; vasopressors (norepinephrine first-line) for septic shock\n3. Avoid further injury: no NSAIDs, hold ACE/ARB, contrast only if essential with prophylaxis\n4. Manage complications:\n   - Hyperkalemia: calcium gluconate, insulin/dextrose + β2-agonist, then removal (loop diuretic, GI cation exchange resins, or dialysis)\n   - Acidosis: sodium bicarbonate if pH <7.1 or HCO3 <15\n   - Volume overload: loop diuretics; ultrafiltration if refractory\n5. Renal replacement therapy when indications met",
+      deepDive: "## Acute Tubular Necrosis — Pathophysiology in Depth\n\nATN is the dominant intrinsic AKI in hospital. Two mechanisms overlap:\n- Ischemic: prolonged pre-renal state → cellular ATP depletion → reactive oxygen species on reperfusion → brush border detachment → tubular cell necrosis and apoptosis → cast formation obstructing tubular lumen → back-leak of filtrate\n- Nephrotoxic: direct tubular epithelial injury from aminoglycosides (lysosomal accumulation in proximal tubule), contrast media (medullary hypoxia + direct toxicity), heme pigments (myoglobin/hemoglobin induce vasoconstriction + cast formation + direct toxicity)\n\n**Phases of ATN:**\n1. Initiation: hours-days, onset of insult, potentially reversible if perfusion restored\n2. Maintenance: 1-2 weeks, GFR stabilized at low level, oliguric; cellular repair ongoing\n3. Recovery: weeks, GFR returns (polyuric phase common due to impaired concentrating ability as tubules regenerate)\n\n## Specific AKI Etiologies — Workup and Treatment\n\n**Contrast-induced AKI (CI-AKI):** Definition: ↑Cr ≥0.5 mg/dL or 25% within 48-72h post-contrast. Risk factors: CKD, diabetes, heart failure, hypotension, high contrast volume. Prevention: IV isotonic crystalloid 1 mL/kg/h x 6-12h pre/post (POSSUM, PRESERVE trial showed no benefit of sodium bicarbonate over saline); minimize contrast volume; consider alternative imaging (US, MRI without contrast). N-acetylcysteine and prophylactic RRT are NOT recommended.\n\n**Rhabdomyolysis:** Crush injury, prolonged immobilization, statins (especially with interacting CYP3A4 inhibitors), malignant hyperthermia, exertional. Creatine kinase >5,000 U/L risks AKI. Pathophysiology: myoglobin-induced renal vasoconstriction, cast formation (heme pigment), and direct tubular toxicity with free iron-catalyzed radicals. Treatment: aggressive IV fluid expansion (target UO 200-300 mL/h), urine alkalinization (controversial), treat hyperkalemia and compartment syndrome. Mannitol has limited evidence.\n\n**Acute interstitial nephritis (AIN):** Hypersensitivity reaction classically 7-14 days after exposure (β-lactams, PPIs, NSAIDs, sulfonamides, rifampin). Presents with rash, fever, eosinophilia, pyuria, WBC casts, hematuria. Diagnosis: kidney biopsy definitive. Treatment: stop offending drug; steroids if AKI severe or persistent (prednisone 1 mg/kg/d x 1-3 weeks based on KDIGO).\n\n**Rapidly progressive GN (RPGN):** Aggressive glomerular injury with crescents on biopsy. ANCA-associated (granulomatosis with polyangiitis, microscopic polyangiitis, EGPA), anti-GBM (Goodpasture's), immune complex (lupus, post-infectious, IgA nephropathy). Treatment: high-dose steroids + cyclophosphamide or rituximab ± plasma exchange (especially anti-GBM and severe ANCA). Pulmonary hemorrhage is an emergency — start treatment empirically.\n\n## Renal Replacement Therapy — Indications\n\nThe AEIOU mnemonic:\n- Acidosis (severe, refractory to medical therapy)\n- Electrolyte derangement (refractory hyperkalemia)\n- Ingestion of dialyzable toxin (salicylates, lithium, methanol, ethylene glycol)\n- Overload (volume overload refractory to diuretics)\n- Uremia (pericarditis, encephalopathy, bleeding)\n\n**Modality:**\n- Intermittent hemodialysis (IHD): standard for hemodynamically stable patients\n- Continuous renal replacement therapy (CRRT): preferred in hemodynamically unstable, septic shock, cerebral edema\n- Sustained low-efficiency dialysis (SLED): hybrid, 6-12h sessions\n\nThe AKIKI, STARRT-AKI trials (2016-2020) showed that delayed initiation (waiting for absolute indications) is non-inferior to early prophylactic initiation in stage 2-3 AKI — practice has shifted toward watchful waiting.\n\n## Drug Dosing in AKI\n\nRenally-cleared drugs require dose adjustment. Vancomycin and aminoglycosides need therapeutic drug monitoring. β-lactams: extended or continuous infusion maximizes time above MIC. Avoid:\n- NSAIDs, ACE/ARB (unless essential), K-sparing diuretics\n- Nephrotoxic contrast unless absolutely necessary\n- Certain bisphosphonates and high-dose gadolinium\n\n## Outcomes and Long-Term Sequelae\n\nAKI survivors have:\n- Increased in-hospital mortality (10-80% depending on stage and context)\n- Higher risk of CKD progression (AKI → CKD transition is well-established)\n- Increased cardiovascular events\n- Increased risk of recurrent AKI\n\nThe KDIGO 2012 guideline recommends long-term follow-up: creatinine and BP at 3 months, then at least annually. Persistent CKD warrants nephrology referral.\n\n## Red Flags\n\n- Anuria in a patient with known bladder outlet symptoms — post-renal; place catheter immediately\n- AKI + palpable purpura + sinus/lung involvement — ANCA vasculitis; start high-dose steroids empirically\n- AKI + pulmonary hemorrhage — anti-GBM or ANCA with pulmonary capillaritis; emergency plasma exchange\n- AKI after contrast in CKD patient — usually self-limited but monitor; complications (hyperkalemia, fluid overload) may need RRT\n- Rapidly rising creatinine + flank pain + hematuria after catheterization in young man — renal artery embolism or thrombosis\n- Rhabdomyolysis with CK >15,000 — high risk of AKI, compartment syndrome, hyperkalemia; ICU admission\n\n## Open Source Reading\n\n- MedlinePlus Encyclopedia — Acute Kidney Injury (Public Domain)\n- OpenStax A&P 2e — Urinary System chapter (CC BY 4.0)\n- Wikibooks Human Physiology — Renal physiology (CC BY-SA 4.0)",
+      heroImage: '/medivault/disc-nephrology.png',
+      tags: JSON.stringify(['kidney', 'ATN', 'dialysis', 'electrolyte']),
+      relatedTopicSlugs: JSON.stringify([]),
+    },
+    // Biochemistry: DKA
+    {
+      slug: 'diabetic-ketoacidosis',
+      title: 'Diabetic Ketoacidosis',
+      disciplineSlug: 'biochemistry',
+      bookSlug: 'openstax-biology-2e',
+      tldr: 'Severe insulin deficiency causing hyperglycemia, ketosis, and metabolic acidosis — a medical emergency with fluid, potassium, and insulin at its core.',
+      overview: 'Diabetic ketoacidosis (DKA) is a life-threatening complication of diabetes mellitus, most often type 1 but increasingly seen in type 2 (ketosis-prone) and flatbush diabetes. It arises from absolute or relative insulin deficiency combined with counter-regulatory hormone excess (glucagon, catecholamines, cortisol, GH), causing unrestrained gluconeogenesis, glycogenolysis, and lipolysis. Free fatty acids flood the liver where they undergo β-oxidation to ketone bodies (β-hydroxybutyrate, acetoacetate, acetone), generating a high anion gap metabolic acidosis. Clinical features include polyuria, polydipsia, weight loss, abdominal pain, nausea, vomiting, Kussmaul respirations (deep, rapid), fruity breath (acetone), and altered mental status. Diagnosis requires hyperglycemia (>250 mg/dL), ketonemia/ketonuria, and pH <7.30 or bicarbonate <18. Management is built on three pillars: aggressive isotonic fluid resuscitation, continuous IV insulin, and careful potassium repletion, with close monitoring of glucose, electrolytes, and mental status.',
+      fullExplanation: "## Pathophysiology\n\nInsulin deficiency + counter-regulatory excess produce:\n1. Hyperglycemia: unrestrained hepatic gluconeogenesis (substrate from muscle proteolysis and glycerol from lipolysis), glycogenolysis, and impaired peripheral glucose uptake\n2. Ketosis: lipolysis releases free fatty acids; hepatic β-oxidation generates acetyl-CoA, which (in the absence of insulin to drive the TCA cycle) is shunted to ketogenesis — acetoacetate, β-hydroxybutyrate (BHB), acetone\n3. Acidosis: ketoacids dissociate, releasing H+ consumed by bicarbonate; the resulting anion gap metabolic acidosis is compensated by Kussmaul respirations (hyperventilation to lower CO2)\n\nOsmotic diuresis from glucosuria causes massive fluid and electrolyte losses (3-6 L water, 300-600 mEq potassium, 300-700 mEq sodium) — even with normal/elevated serum potassium, total body stores are profoundly depleted.\n\n## Diagnostic Criteria\n\n| Parameter | Mild DKA | Moderate | Severe |\n|-----------|----------|----------|--------|\n| Plasma glucose (mg/dL) | >250 | >250 | >250 |\n| Arterial pH | 7.25-7.30 | 7.00-7.24 | <7.00 |\n| Bicarbonate (mEq/L) | 15-18 | 10-<15 | <10 |\n| Anion gap | >10 | >12 | >12 |\n| Mental status | Alert | Alert/drowsy | Stupor/coma |\n\n**Ketone measurement:** β-hydroxybutyrate (preferred — early and predominant in DKA) >3 mEq/L confirms ketosis.\n\n## Precipitants\n\nThe I's mnemonic:\n- Infection (pneumonia, UTI, gastroenteritis) — most common\n- Ischemia/Infarction (MI, stroke)\n- Insulin omission (intentional or inadequate dosing)\n- Intoxication (alcohol, cocaine)\n- Iatrogenic (steroids, SGLT2 inhibitors — euglycemic DKA)\n- Infant (pregnancy)\n\n## Management — The Three Pillars\n\n**1. Fluids:** Start with 0.9% NaCl 15-20 mL/kg in first hour. Subsequent rate depends on corrected sodium: if normal/high, switch to 0.45% NaCl at 250-500 mL/h; if low, continue 0.9%. Add 5% dextrose to IVF when glucose ≤200 mg/dL, and continue insulin to clear ketones (not just glucose).\n\n**2. Insulin:** Regular insulin IV infusion 0.1 U/kg/h after 0.1 U/kg bolus (some skip bolus). Target glucose drop 50-75 mg/dL/h. Once glucose ≤200, switch IVF to include dextrose and reduce insulin to 0.02-0.05 U/kg/h. Continue until AG closed AND patient eating — overlap subcutaneous insulin 1-2h before stopping IV.\n\n**3. Potassium:** Despite normal/elevated serum K on presentation, total body K is depleted. Insulin therapy shifts K intracellularly. If K <3.3, hold insulin and give K 20-30 mEq/h. If K 3.3-5.2, add 20-30 mEq K to each liter of IVF. If K >5.2, hold K, recheck q2h. Target K 4-5.\n\nBicarbonate is generally NOT recommended unless pH <6.9 — and even then, evidence is weak.",
+      deepDive: "## Euglycemic DKA — A Modern Phenotype\n\nSGLT2 inhibitors (canagliflozin, dapagliflozin, empagliflozin) cause euglycemic DKA by:\n- Increasing urinary glucose loss (lower plasma glucose)\n- Reducing insulin secretion (less glucagon suppression)\n- Increasing glucagon\n- Volume depletion (worsens ketosis)\n\nDKA criteria may be met with glucose <250 mg/dL (sometimes <200). Suspect in patients on SGLT2 inhibitors with GI symptoms, infection, surgery, low-carb diet, or pregnancy. Treatment is identical to classic DKA — but dextrose must be added early to allow insulin to suppress ketogenesis.\n\n## Cerebral Edema — Pediatric Nightmare\n\nThe most feared complication of DKA treatment, especially in children (0.3-1% incidence, 20-40% mortality). Onset typically 4-12 hours after starting therapy. Symptoms: headache, vomiting, altered mental status, seizures, pupillary changes.\n\nRisk factors: severe acidosis, severe hypocapnia, high urea, young age, new-onset diabetes, rapid fluid bolus.\n\nPrevention: gradual fluid correction (avoid >4 mL/kg/h saline in first 4h unless hypovolemic shock), avoid insulin bolus in children, careful K replacement, avoid bicarbonate.\n\nTreatment: mannitol 0.5-1 g/kg IV or hypertonic saline 3% 5 mL/kg over 10 min, elevate head of bed, reduce IVF rate.\n\n## Sodium Correction in Hyperglycemia\n\nHyperglycemia artificially lowers measured serum sodium: water shifts extracellularly due to osmotic pull of glucose. Corrected Na = measured Na + 1.6 × (glucose - 100)/100. Some use 2.4 for very high glucose.\n\nA corrected sodium that is low or falling during therapy suggests excess free water — switch to more concentrated saline. A rising corrected sodium reflects ongoing free water loss — may need to add some dextrose-containing free water.\n\n## Anion Gap and Osm Gap\n\nAnion gap = Na - (Cl + HCO3). Normal 8-12. In DKA, ketoacids consume bicarbonate, raising the gap. As therapy progresses, bicarbonate regenerates and the gap closes. Ketones are excreted in urine with cations (Na-K) — so during recovery, the anion gap may normalize but hyperchloremic metabolic acidosis persists (because keto-anion loss with cation excretion leaves behind chloride). This is benign and self-resolves.\n\n## Comparison: DKA vs HHS\n\n| Feature | DKA | HHS |\n|---------|-----|-----|\n| Glucose | >250 | >600 |\n| pH | <7.30 | >7.30 |\n| Bicarbonate | <18 | >18 |\n| Ketones | ++ | trace |\n| Osmolality | variable | >320 |\n| Mental status | alert to coma | stupor/coma typical |\n| Volume depletion | moderate-severe | severe |\n| Onset | hours-days | days-weeks |\n| Type of diabetes | type 1 typical | type 2 typical |\n\n**Treatment differences:** HHS requires more aggressive fluids (often 6-9 L deficit), slower insulin (0.05-0.1 U/kg/h), and prolonged therapy (24-72h) because glucose equilibrates slowly. Cerebral edema risk is lower but still present; avoid overly rapid correction.\n\n## Management Pitfalls\n\n1. Stopping insulin when glucose normalizes — ketones are still present, AG still open; insulin must continue (with dextrose) until AG closes\n2. Treating K sparingly because \"K is high\" — total body K is depleted; insulin therapy will cause dangerous hypokalemia\n3. Bicarbonate for \"severe acidosis\" — only for pH <6.9; can worsen hypokalemia, cerebral acidosis paradoxically, and delay ketoacid clearance\n4. Forgetting to investigate precipitant — DKA is a symptom; missing infection, MI, or non-compliance leads to recurrence\n5. Subcutaneous insulin overlap missed — stopping IV before SC insulin is absorbing leads to rebound DKA within hours\n\n## Transition to Maintenance\n\nOnce AG closed and patient eating:\n- Overlap IV insulin with SC fast-acting insulin for 1-2 hours\n- Calculate total daily insulin requirement: sum of last 6-8h IV insulin × 4\n- Split: 50% basal (glargine, detemir, degludec), 50% prandial (lispro, aspart, glulisine) divided across meals\n- Adjust based on glucose patterns; review precipitant and patient education\n\n## Red Flags\n\n- Altered mental status at presentation with glucose <600 — consider coexisting pathology (sepsis, intoxication, head injury) or cerebral edema\n- Abdominal pain out of proportion — could be pancreatitis (more common in DKA), appendicitis, or ischemic bowel; treat DKA but image abdomen\n- Hypokalemia before insulin — K <3.3 is dangerous; HOLD insulin, replete aggressively\n- Persistent acidosis despite fluid + insulin — check for lactic acidosis (sepsis, bowel ischemia), toxic alcohol ingestion (osmolar gap), or sepsis\n- Hypoglycemia during therapy — insulin rate too high or dextrose too low; reduce insulin, increase dextrose\n- Rising corrected sodium + altered mental status — hypernatremia from free water loss; check osmolality, give hypotonic fluids\n\n## Evidence & References\n\n1. ADA DKA Consensus 2024 — current diagnostic and management recommendations\n2. Kitabchi et al. — classic DKA management reviews (Diabetes Care)\n3. European Society for Paediatric Endocrinology — pediatric DKA guidelines (cerebral edema prevention)\n4. Rosenstock et al. — euglycemic DKA with SGLT2 inhibitors (NEJM 2015)\n\n## Open Source Reading\n\n- MedlinePlus Encyclopedia — Diabetic Ketoacidosis (Public Domain)\n- OpenStax Biology 2e — Carbohydrate, Lipid, and Protein Metabolism chapters (CC BY 4.0)\n- OpenStax A&P 2e — Endocrine Pancreas chapter (CC BY 4.0)",
+      heroImage: '/medivault/disc-biochemistry.png',
+      tags: JSON.stringify(['endocrine', 'acid-base', 'insulin', 'emergency']),
+      relatedTopicSlugs: JSON.stringify(['aki', 'copd']),
+    },
+  ]
+
+  for (const t of topics) {
+    const { disciplineSlug, bookSlug, ...topicData } = t
+    const discipline = await db.discipline.findUnique({ where: { slug: disciplineSlug } })
+    const book = bookSlug ? await db.book.findUnique({ where: { slug: bookSlug } }) : null
+    await db.topic.upsert({
+      where: { slug: t.slug },
+      update: { ...topicData, disciplineId: discipline?.id, bookId: book?.id },
+      create: { ...topicData, disciplineId: discipline?.id, bookId: book?.id },
+    })
+  }
+  console.log(`Seeded ${topics.length} topics`)
+
+  // CLINICAL CASES — 10 cases
+  const cases = [
+    {
+      slug: 'case-stemi-55m',
+      title: 'Crushing Chest Pain in a 55-Year-Old Man',
+      chiefComplaint: 'Severe retrosternal chest pain for 45 minutes',
+      specialty: 'Cardiology',
+      difficulty: 'MEDIUM',
+      organSystem: 'Cardiovascular',
+      briefImage: '/medivault/case-ecg.png',
+      presentation: 'A 55-year-old man presents to the emergency department with 45 minutes of severe retrosternal chest pain described as "crushing," radiating to the left arm and jaw. He is diaphoretic, anxious, and short of breath. He has a 30-pack-year smoking history, hypertension, and his father had an MI at age 58.',
+      history: 'Pain began at rest while watching television. No relief with antacids. He has had similar but milder pain with exertion over the past 2 weeks, relieved by rest — never sought medical attention. Medications: amlodipine 10 mg daily, hydrochlorothiazide 25 mg daily. Allergies: none. Social: smokes 1 pack/day, occasional alcohol, no illicit drugs.',
+      exam: 'BP 152/94, HR 102, RR 22, SpO2 96% on room air. General: diaphoretic, anxious, clutching chest. Neck: JVP normal. Lungs: clear. Heart: S1 S2 normal, no murmurs, no S3/S4. Abdomen: soft. Extremities: no edema, pulses 2+ bilaterally.',
+      orders: JSON.stringify([
+        { name: '12-lead ECG', turnaround: 'Immediate', result: 'ST elevation ≥2 mm in leads V2-V4; reciprocal ST depression in II, III, aVF', interpretation: 'Acute anterior STEMI — LAD occlusion' },
+        { name: 'High-sensitivity troponin', turnaround: '1 hour', result: '847 ng/L (URL 14 ng/L)', interpretation: 'Markedly elevated — acute myocardial injury' },
+        { name: 'Chest X-ray', turnaround: '20 min', result: 'Normal cardiac silhouette, no pulmonary edema, no pneumothorax', interpretation: 'No contraindication to fibrinolysis if PCI unavailable' },
+        { name: 'Hemoglobin, platelets, INR', turnaround: '30 min', result: 'Hgb 14.2, platelets 220, INR 1.0', interpretation: 'No anemia or coagulopathy — safe for anticoagulation and PCI' },
+        { name: 'Basic metabolic panel', turnaround: '30 min', result: 'Creatinine 0.9, K 4.0, glucose 110', interpretation: 'Normal renal function and electrolytes — contrast-safe' },
+      ]),
+      differentials: JSON.stringify([
+        { diagnosis: 'Acute anterior STEMI', isCorrect: true, explanation: 'ST elevation in V2-V4 with reciprocal depression in inferior leads is the classic pattern of LAD occlusion. Immediate reperfusion required.' },
+        { diagnosis: 'Unstable angina', isCorrect: false, explanation: 'UA does not cause ST elevation or biomarker elevation. ECG and troponin findings rule this out.' },
+        { diagnosis: 'Pericarditis', isCorrect: false, explanation: 'Pericarditis causes diffuse ST elevation and PR depression, not localized to a vascular territory, and pain is pleuritic/positional.' },
+        { diagnosis: 'Aortic dissection', isCorrect: false, explanation: 'Dissection can cause chest pain radiating to back, BP differential, widened mediastinum. Must always be considered — but the ECG here is diagnostic of STEMI.' },
+        { diagnosis: 'Pulmonary embolism', isCorrect: false, explanation: 'PE typically causes pleuritic pain, dyspnea, tachycardia. ST elevation in V2-V4 is not a feature of PE.' },
+      ]),
+      correctDiagnosis: 'Acute Anterior STEMI (LAD occlusion)',
+      diagnosisExplanation: 'The clinical presentation (prolonged crushing chest pain at rest, diaphoresis, cardiac risk factors), ECG (ST elevation in V2-V4 with reciprocal inferior depression), and troponin elevation collectively make acute anterior STEMI the diagnosis. The culprit vessel is the left anterior descending artery. This is a time-critical emergency requiring immediate reperfusion — primary PCI is preferred if door-to-balloon time <90 minutes can be achieved; otherwise fibrinolysis within 30 minutes of arrival.',
+      teachingPoints: 'Key teaching points: (1) "Time is muscle" — every 30 min delay in reperfusion increases 1-year mortality by 7.5%. (2) Always obtain 12-lead ECG within 10 minutes of arrival for any chest pain. (3) Reciprocal ST depression strongly supports STEMI over pericarditis. (4) Administer dual antiplatelet therapy and anticoagulation immediately. (5) Always rule out aortic dissection (BP differentials, widened mediastinum) before anticoagulating if pain radiates to back. (6) Door-to-balloon time <90 minutes is the quality metric. (7) Post-PCI: high-intensity statin, beta-blocker, ACE inhibitor (especially LV dysfunction), dual antiplatelet 12 months, cardiac rehab.',
+      redFlags: 'Chest pain at rest >20 min: presume ACS. New ST elevation in 2 contiguous leads: activate cath lab. Hemodynamic instability: consider cardiogenic shock, mechanical complications.',
+      xpReward: 150,
+      disciplineSlug: 'cardiology',
+    },
+    {
+      slug: 'case-stroke-72f',
+      title: 'Sudden Right-Sided Weakness in a 72-Year-Old Woman',
+      chiefComplaint: 'Sudden onset right arm and face weakness with slurred speech',
+      specialty: 'Neurology',
+      difficulty: 'HARD',
+      organSystem: 'Neurological',
+      briefImage: '/medivault/case-mri.png',
+      presentation: 'A 72-year-old woman is brought to the ED by her daughter, who found her slumped in a chair 1 hour ago with right-sided weakness and inability to speak clearly. The patient has atrial fibrillation on apixaban (recently non-adherent), hypertension, and type 2 diabetes.',
+      history: 'Last known well: 2 hours ago. Daughter spoke to her on the phone 3 hours ago and she was normal. Medications: apixaban 5 mg BID (reports missing doses for past week), metformin, lisinopril. No prior stroke. No recent surgery, bleeding, or trauma.',
+      exam: 'BP 178/96, HR 88 irregular, RR 18, SpO2 97%. General: alert, attempts to speak but only incomprehensible sounds. Neuro: NIHSS 16 — right hemiparesis (face, arm > leg), global aphasia, gaze preference to the left, right homonymous hemianopia. Heart: irregularly irregular.',
+      orders: JSON.stringify([
+        { name: 'Non-contrast head CT', turnaround: '15 min', result: 'No hemorrhage; hyperdense left MCA sign; loss of gray-white differentiation in left insular ribbon', interpretation: 'Acute left MCA territory ischemic stroke; no hemorrhage' },
+        { name: 'CT angiogram head/neck', turnaround: '20 min', result: 'Occlusion of left MCA M1 segment; patent cervical carotids', interpretation: 'Large-vessel occlusion (LVO) — thrombectomy candidate' },
+        { name: 'CBC, PT/INR, PTT, basic metabolic panel', turnaround: '30 min', result: 'Hgb 13.1, platelets 230, INR 1.1, PTT 28, creatinine 0.9, glucose 145', interpretation: 'No contraindication to thrombolysis — INR normal despite non-adherent apixaban' },
+        { name: 'EKG', turnaround: 'Immediate', result: 'Atrial fibrillation, rate 88, no acute ischemic changes', interpretation: 'Likely cardioembolic source for stroke' },
+        { name: 'Troponin', turnaround: '1 hour', result: '12 ng/L (normal)', interpretation: 'No concurrent ACS' },
+      ]),
+      differentials: JSON.stringify([
+        { diagnosis: 'Acute ischemic stroke — left MCA occlusion (cardioembolic from atrial fibrillation)', isCorrect: true, explanation: 'Sudden focal deficit in MCA territory, AF on apixaban (non-adherent), no hemorrhage on CT, LVO on CTA. Thrombolysis + thrombectomy indicated within window.' },
+        { diagnosis: 'Intracerebral hemorrhage', isCorrect: false, explanation: 'ICH presents similarly but head CT would show hemorrhage.' },
+        { diagnosis: 'Postictal Todds paresis', isCorrect: false, explanation: 'Considered if seizure at onset, but no history of seizure, no witnessed seizure activity, and deficit pattern fits vascular territory.' },
+        { diagnosis: 'Hypoglycemia', isCorrect: false, explanation: 'Hypoglycemia can mimic stroke. But glucose is 145 mg/dL — not hypoglycemic. Always check glucose immediately in any suspected stroke.' },
+        { diagnosis: 'Brain tumor with seizure', isCorrect: false, explanation: 'Tumors cause progressive deficit, not sudden. CT would show mass.' },
+      ]),
+      correctDiagnosis: 'Acute Ischemic Stroke — Left MCA M1 Occlusion (Cardioembolic)',
+      diagnosisExplanation: 'Sudden onset of right hemiparesis with global aphasia and gaze preference in a patient with atrial fibrillation is the classic presentation of acute left MCA occlusion from cardioembolism. Non-contrast CT excludes hemorrhage; CTA confirms LVO. Last known well 2 hours ago — well within 4.5h window for IV thrombolysis and 6h window for mechanical thrombectomy. Despite apixaban use, INR is normal and last dose was >48h ago, allowing thrombolysis per guidelines.',
+      teachingPoints: 'Key teaching points: (1) "Time is brain" — 1.9 million neurons lost per minute of MCA occlusion. (2) Establish "last known well" time precisely — this drives all therapy decisions. (3) Non-contrast CT first — to rule out hemorrhage before any lytics. (4) CTA confirms LVO candidacy for thrombectomy. (5) Door-to-needle time for thrombolysis <45 min (AHA target). (6) Direct oral anticoagulant use is not an absolute contraindication to lytics if last dose >48h AND sensitive labs normal. (7) Post-stroke: cardiac workup, antiplatelet 2 weeks then transition to anticoagulation (1-3-6-12 rule based on severity), statin (SPARCL), BP control, swallow screen.',
+      redFlags: 'Sudden focal neuro deficit: presume stroke. Always exclude hypoglycemia. BP >185/110: lower before lysis. Worsening deficit: hemorrhagic transformation.',
+      xpReward: 200,
+      disciplineSlug: 'neurology',
+    },
+    {
+      slug: 'case-copd-exac-68m',
+      title: 'Worsening Dyspnea in a 68-Year-Old Smoker',
+      chiefComplaint: '3 days of increasing dyspnea, cough, and purulent sputum',
+      specialty: 'Pulmonology',
+      difficulty: 'MEDIUM',
+      organSystem: 'Respiratory',
+      briefImage: '/medivault/case-cxr.png',
+      presentation: 'A 68-year-old man with known severe COPD (FEV1 35% predicted, on triple inhaler therapy) presents with 3 days of worsening dyspnea, increased cough productive of yellow-green sputum, and wheeze. He has not required steroids or hospitalization in the past year.',
+      history: 'COPD diagnosed 12 years ago; 50-pack-year smoker (quit 4 years ago). Home medications: fluticasone/umeclidinium/vilanterol (Trelegy), albuterol PRN (using 6-8x/day, baseline 1-2x/day). Last exacerbation 14 months ago, treated outpatient. No fever, no hemoptysis, no chest pain.',
+      exam: 'BP 138/86, HR 102, RR 26, SpO2 88% on room air (baseline 92%). General: anxious, using accessory muscles, pursed-lip breathing. Chest: hyperinflated, diffusely decreased breath sounds, expiratory wheezes bilaterally, no crackles. Heart: tachycardic.',
+      orders: JSON.stringify([
+        { name: 'Arterial blood gas', turnaround: '15 min', result: 'pH 7.32, PaCO2 58, PaO2 56, HCO3 28 (on room air)', interpretation: 'Acute on chronic respiratory acidosis with partial metabolic compensation; type 2 respiratory failure — candidate for NIV' },
+        { name: 'Chest X-ray', turnaround: '20 min', result: 'Hyperinflated lungs, flattened diaphragms, no focal consolidation, no pneumothorax', interpretation: 'No pneumonia or pneumothorax — exacerbation likely viral/infectious without consolidation' },
+        { name: 'CBC, basic metabolic panel', turnaround: '30 min', result: 'WBC 11.2 (no left shift), Hgb 16.2 (chronic hypoxia), K 4.1, creatinine 1.0', interpretation: 'Mild leukocytosis consistent with steroid effect or stress' },
+        { name: 'ECG', turnaround: 'Immediate', result: 'Sinus tachycardia, right axis deviation, tall R in V1 (RVH)', interpretation: 'Chronic cor pulmonale changes; no acute ischemia' },
+      ]),
+      differentials: JSON.stringify([
+        { diagnosis: 'Acute COPD exacerbation (likely infectious, GOLD Group E)', isCorrect: true, explanation: 'Worsening dyspnea, increased sputum volume and purulence in known COPD patient. Standard exacerbation management indicated.' },
+        { diagnosis: 'Pneumonia', isCorrect: false, explanation: 'No consolidation on CXR, no fever, no leukocytosis with left shift.' },
+        { diagnosis: 'Pneumothorax', isCorrect: false, explanation: 'Sudden worsening dyspnea in severe COPD raises concern, but CXR shows no pneumothorax.' },
+        { diagnosis: 'Pulmonary embolism', isCorrect: false, explanation: 'PE can mimic COPD exacerbation. Wells score low here.' },
+        { diagnosis: 'Acute heart failure', isCorrect: false, explanation: 'No orthopnea, no PND history, no edema, no crackles, CXR no edema.' },
+      ]),
+      correctDiagnosis: 'Acute COPD Exacerbation (Type 2 Respiratory Failure)',
+      diagnosisExplanation: 'The triad of increased dyspnea, increased sputum volume, and increased sputum purulence in a known COPD patient meets criteria for Anthonisen type 1 exacerbation. ABG shows acute-on-chronic respiratory acidosis (pH 7.32, PaCO2 58, with elevated HCO3 indicating chronic CO2 retention). SpO2 88% and PaO2 56 confirm type 2 respiratory failure. Management: controlled oxygen to target SpO2 88-92%, NIV for pH 7.25-7.35 (BIPAP), nebulized bronchodilators, systemic corticosteroids (prednisone 40 mg x 5 days), antibiotics.',
+      teachingPoints: 'Key teaching points: (1) Anthonisen criteria — 2 of 3 (dyspnea, sputum volume, sputum purulence) warrant antibiotics. (2) Target SpO2 88-92% in COPD — hyperoxia worsens hypercapnia via V/Q mismatch (Haldane effect). (3) NIV is first-line for respiratory acidosis (pH 7.25-7.35); reduces mortality and intubation rates by ~50%. (4) Steroids: prednisone 40 mg x 5 days (REDUCE trial). (5) Antibiotics: amoxicillin-clavulanate, doxycycline, or macrolide x 5-7 days. (6) Always consider PE — if high suspicion, CTPA. (7) Discharge: optimize inhaler technique, consider pulmonary rehab, vaccination, smoking cessation.',
+      redFlags: 'SpO2 <88% on room air: type 2 respiratory failure — start controlled O2. pH <7.25: consider intubation if NIV failing. Sudden deterioration: rule out pneumothorax (tension), PE, MI.',
+      xpReward: 120,
+      disciplineSlug: 'pulmonology',
+    },
+    {
+      slug: 'case-aki-65m',
+      title: 'Rising Creatinine After Cardiac Catheterization',
+      chiefComplaint: 'Found to have elevated creatinine 2 days after PCI',
+      specialty: 'Nephrology',
+      difficulty: 'MEDIUM',
+      organSystem: 'Renal',
+      briefImage: '/medivault/disc-nephrology.png',
+      presentation: 'A 65-year-old man is admitted 2 days post-PCI for NSTEMI. Creatinine was 1.1 pre-procedure, now 2.4. Urine output decreased from 80 mL/h to 25 mL/h over the past 12 hours. He received 220 mL of iodinated contrast during the procedure. He has type 2 diabetes, hypertension, and stage 3a CKD (baseline Cr 1.1, eGFR 65).',
+      history: 'PCI 2 days ago with stent placement to LAD. Received isotonic saline pre/post procedure per protocol. Metformin held since admission. Medications: aspirin, ticagrelor, atorvastatin 80 mg, metoprolol, lisinopril (held post-procedure). No contrast reaction.',
+      exam: 'BP 132/78, HR 78, RR 16, SpO2 96%. General: alert, no acute distress. Neck: JVP at sternal angle. Lungs: clear. Heart: S1 S2, no murmurs. Abdomen: soft, no costovertebral angle tenderness. Extremities: trace edema.',
+      orders: JSON.stringify([
+        { name: 'Basic metabolic panel', turnaround: '30 min', result: 'Creatinine 2.4 (baseline 1.1), BUN 38, K 5.4, HCO3 20, glucose 132', interpretation: 'AKI Stage 2 (2.2x baseline) with hyperkalemia (K 5.4) and mild metabolic acidosis' },
+        { name: 'Urinalysis', turnaround: '1 hour', result: 'Specific gravity 1.020, pH 6.5, 1+ protein, microscopic: muddy brown granular casts, few renal tubular epithelial cells', interpretation: 'Muddy brown casts = acute tubular necrosis (ATN) — intrinsic AKI from contrast' },
+        { name: 'Fractional excretion of sodium (FENa)', turnaround: '1 hour', result: 'FENa 2.8%', interpretation: '>2% suggests intrinsic ATN (contrast nephropathy)' },
+        { name: 'Renal ultrasound', turnaround: '2 hours', result: 'Normal-sized kidneys (10.5 cm bilaterally), no hydronephrosis, no stones', interpretation: 'Excludes obstruction; normal kidney size suggests acute process' },
+        { name: 'EKG', turnaround: 'Immediate', result: 'Sinus rhythm, peaked T waves in V2-V4', interpretation: 'Hyperkalemia-related ECG changes — requires urgent treatment' },
+      ]),
+      differentials: JSON.stringify([
+        { diagnosis: 'Contrast-induced acute kidney injury (CI-AKI) with acute tubular necrosis', isCorrect: true, explanation: 'Creatinine rise 48-72h post-contrast, muddy brown casts on UA, FENa >2%, normal renal US — classic CI-AKI presentation. Hyperkalemia and peaked T waves require urgent management.' },
+        { diagnosis: 'Pre-renal AKI from heart failure/cardiorenal', isCorrect: false, explanation: 'JVP is normal, no signs of volume overload or depletion. FENa <1% and bland UA would be expected in pre-renal.' },
+        { diagnosis: 'Acute interstitial nephritis (AIN)', isCorrect: false, explanation: 'AIN typically presents with rash, fever, eosinophilia, WBC casts in urine after 7-14 days of new drug.' },
+        { diagnosis: 'Post-renal AKI (obstruction)', isCorrect: false, explanation: 'Renal ultrasound shows no hydronephrosis. Bladder not palpable. Post-renal cause excluded.' },
+        { diagnosis: 'Cholesterol emboli syndrome', isCorrect: false, explanation: 'Cholesterol emboli after catheterization cause AKI, livedo reticularis, eosinophilia — typically days to weeks post-procedure.' },
+      ]),
+      correctDiagnosis: 'Contrast-Induced AKI (CI-AKI) with Acute Tubular Necrosis',
+      diagnosisExplanation: 'The pattern of creatinine rise 48-72 hours post-contrast, muddy brown granular casts on urinalysis, FENa >2%, and exclusion of obstruction by ultrasound confirms CI-AKI. The hyperkalemia (K 5.4) with peaked T waves on ECG is an acute emergency requiring immediate treatment. Most CI-AKI is self-limited, peaking at 3-7 days and resolving within 2 weeks, but severe cases may require temporary dialysis.',
+      teachingPoints: 'Key teaching points: (1) CI-AKI defined as Cr rise ≥0.5 mg/dL or 25% within 48-72h of contrast. (2) Risk factors: CKD, diabetes, heart failure, hypotension, high contrast volume. (3) Prevention: IV isotonic crystalloid 1 mL/kg/h x 6-12h pre/post, minimize contrast volume. (4) N-acetylcysteine and prophylactic dialysis are NOT recommended. (5) Hyperkalemia management: calcium gluconate (stabilize myocardium first), insulin/dextrose shift, β2-agonist, then removal. (6) Most CI-AKI is supportive — hold further nephrotoxins. (7) Indications for dialysis (AEIOU): refractory hyperkalemia, severe acidosis, volume overload, uremia. (8) Metformin: hold during AKI to prevent lactic acidosis.',
+      redFlags: 'Peaked T waves on ECG + K >5.0: hyperkalemia — start calcium gluconate immediately. Anuria + rapidly rising Cr: consider bilateral obstruction. AKI + new rash: AIN — biopsy, stop offending drug.',
+      xpReward: 130,
+      disciplineSlug: 'nephrology',
+    },
+    {
+      slug: 'case-dka-19f',
+      title: 'Vomiting and Altered Mental Status in a 19-Year-Old Woman',
+      chiefComplaint: '2 days of nausea, vomiting, abdominal pain, and now confusion',
+      specialty: 'Endocrinology',
+      difficulty: 'HARD',
+      organSystem: 'Endocrine',
+      briefImage: '/medivault/disc-biochemistry.png',
+      presentation: 'A 19-year-old college student is brought to the ED by her roommate with 2 days of nausea, vomiting, diffuse abdominal pain, and increasing fatigue. This morning she was difficult to arouse. She has lost 8 pounds over the past month despite increased appetite. Roommate notes she has been urinating frequently and drinking large amounts of water.',
+      history: 'No prior medical history. No medications. Family history: mother has type 1 diabetes. Social: college student, no alcohol or drug use. No recent illness.',
+      exam: 'BP 98/62, HR 124, RR 32 deep and rapid (Kussmaul), SpO2 98%, T 37.0°C. General: drowsy, aroused by voice. Mucous membranes dry, skin tenting. Lungs: clear, deep rapid breathing. Heart: tachycardic. Abdomen: soft, diffuse mild tenderness. Neuro: drowsy but follows simple commands.',
+      orders: JSON.stringify([
+        { name: 'Point-of-care glucose', turnaround: 'Immediate', result: '487 mg/dL', interpretation: 'Marked hyperglycemia' },
+        { name: 'Venous blood gas', turnaround: '10 min', result: 'pH 7.18, pCO2 22, HCO3 8, base excess -18', interpretation: 'Severe high anion gap metabolic acidosis with respiratory compensation' },
+        { name: 'Basic metabolic panel + anion gap', turnaround: '30 min', result: 'Na 130, K 5.6, Cl 96, HCO3 8, BUN 32, Cr 1.2, glucose 487; AG = 26', interpretation: 'Severe high anion gap metabolic acidosis; corrected Na = 130 + 1.6 × (487-100)/100 = 136' },
+        { name: 'Beta-hydroxybutyrate', turnaround: '1 hour', result: '6.8 mmol/L (normal <0.6)', interpretation: 'Marked ketonemia — confirms DKA' },
+        { name: 'Urinalysis', turnaround: '30 min', result: 'Large glucose, large ketones, no leukocytes, no nitrites', interpretation: 'Glucosuria and ketonuria without UTI' },
+        { name: 'HbA1c', turnaround: '4 hours', result: '11.8%', interpretation: 'Confirms chronic hyperglycemia — likely new-onset type 1 diabetes presenting as DKA' },
+      ]),
+      differentials: JSON.stringify([
+        { diagnosis: 'Diabetic ketoacidosis — new-onset type 1 diabetes', isCorrect: true, explanation: 'Hyperglycemia (487), high anion gap metabolic acidosis (pH 7.18, HCO3 8, AG 26), ketonemia (BHB 6.8), Kussmaul respirations, weight loss, polyuria/polydipsia, family history of T1DM.' },
+        { diagnosis: 'Hyperosmolar hyperglycemic state (HHS)', isCorrect: false, explanation: 'HHS has glucose >600, pH >7.30, HCO3 >18, minimal ketones.' },
+        { diagnosis: 'Alcoholic ketoacidosis', isCorrect: false, explanation: 'AKA occurs in alcoholics with recent binge; glucose typically low-normal.' },
+        { diagnosis: 'Lactic acidosis', isCorrect: false, explanation: 'Lactic acidosis causes high AG metabolic acidosis but typically without marked hyperglycemia or ketonemia.' },
+        { diagnosis: 'Toxic alcohol ingestion', isCorrect: false, explanation: 'Both cause high AG metabolic acidosis with osmolar gap. Patients often appear intoxicated without hyperglycemia.' },
+      ]),
+      correctDiagnosis: 'Diabetic Ketoacidosis — Severe (New-Onset Type 1 Diabetes)',
+      diagnosisExplanation: 'This patient meets all diagnostic criteria for severe DKA: glucose 487 mg/dL, pH 7.18, bicarbonate 8, anion gap 26, beta-hydroxybutyrate 6.8 mmol/L, and altered mental status. The 1-month history of weight loss, polyuria, polydipsia, and family history of type 1 diabetes strongly suggest new-onset T1DM. The corrected sodium is 136, and K is 5.6 — but total body potassium is profoundly depleted. Management follows the three pillars: aggressive isotonic fluid resuscitation, IV regular insulin infusion, and potassium replacement with close monitoring.',
+      teachingPoints: 'Key teaching points: (1) DKA triad: hyperglycemia, ketosis, acidosis. Always check glucose immediately in any patient with altered mental status. (2) Calculate corrected sodium: Na + 1.6 × (glucose - 100)/100. (3) Total body potassium is depleted despite normal/elevated serum K — insulin therapy will shift K intracellularly. If K <3.3, HOLD insulin and replete first. (4) Fluids first, then insulin. (5) Add dextrose when glucose ≤200, continue insulin until AG closes. (6) Avoid bicarbonate unless pH <6.9. (7) Investigate precipitant — infection, insulin omission, MI, pregnancy. (8) Subcutaneous insulin overlap 1-2h before stopping IV. (9) Cerebral edema is the feared complication in children/young adults — gradual fluid correction, avoid boluses.',
+      redFlags: 'Altered mental status with hyperglycemia: DKA or HHS until proven otherwise. K <3.3 before insulin: replete first. Persistent acidosis despite therapy: consider sepsis, lactic acidosis, toxic alcohol. Worsening mental status during therapy: cerebral edema — mannitol, hypertonic saline.',
+      xpReward: 180,
+      disciplineSlug: 'biochemistry',
+    },
+    {
+      slug: 'case-afib-rvr-78f',
+      title: 'Palpitations and Shortness of Breath in a 78-Year-Old Woman',
+      chiefComplaint: 'Sudden onset palpitations and shortness of breath',
+      specialty: 'Cardiology',
+      difficulty: 'EASY',
+      organSystem: 'Cardiovascular',
+      briefImage: '/medivault/disc-cardiology.png',
+      presentation: 'A 78-year-old woman presents to the ED with 4 hours of sudden-onset palpitations, shortness of breath, and lightheadedness. She has hypertension and hypothyroidism. She has never had this before.',
+      history: 'Symptoms began at rest this morning. No chest pain, no syncope. Medications: amlodipine 10 mg, levothyroxine 75 mcg. No allergies. Social: lives alone, independent.',
+      exam: 'BP 110/70, HR 142 irregular, RR 22, SpO2 95% on room air. General: alert, mildly anxious. Neck: JVP normal. Lungs: clear. Heart: irregularly irregular tachycardia, no murmurs. Extremities: no edema.',
+      orders: JSON.stringify([
+        { name: '12-lead ECG', turnaround: 'Immediate', result: 'Irregularly irregular rhythm, no P waves, narrow QRS (~90 ms), rate ~142', interpretation: 'Atrial fibrillation with rapid ventricular response (AFib with RVR)' },
+        { name: 'CBC, basic metabolic panel, TSH', turnaround: '1 hour', result: 'WBC 7.2, Hgb 12.8, K 4.2, Cr 0.9, glucose 110, TSH 2.4', interpretation: 'Normal renal function and electrolytes; thyroid normal — not hyperthyroid-induced AF' },
+        { name: 'Troponin', turnaround: '1 hour', result: '8 ng/L (URL 14)', interpretation: 'No acute myocardial injury' },
+        { name: 'Chest X-ray', turnaround: '20 min', result: 'Normal cardiac silhouette, no pulmonary edema', interpretation: 'No pulmonary cause of dyspnea; no heart failure' },
+        { name: 'Echocardiogram', turnaround: 'Elective', result: 'Normal LV function (EF 60%), normal valve function, normal LA size (3.8 cm)', interpretation: 'Structurally normal heart — AF likely lone/secondary to age and HTN' },
+      ]),
+      differentials: JSON.stringify([
+        { diagnosis: 'Atrial fibrillation with rapid ventricular response', isCorrect: true, explanation: 'Irregularly irregular pulse + no P waves on ECG + narrow QRS = AFib with RVR. Patient is hemodynamically stable — rate control first-line.' },
+        { diagnosis: 'Atrial flutter with 2:1 conduction', isCorrect: false, explanation: 'Flutter typically has sawtooth flutter waves and regular rhythm.' },
+        { diagnosis: 'Multifocal atrial tachycardia (MAT)', isCorrect: false, explanation: 'MAT has ≥3 distinct P wave morphologies and is irregular, but P waves are present.' },
+        { diagnosis: 'Supraventricular tachycardia (SVT)', isCorrect: false, explanation: 'SVT is typically regular and narrow-complex.' },
+        { diagnosis: 'Sepsis-induced tachycardia', isCorrect: false, explanation: 'No fever, no hypotension, no infection source. Tachycardia is irregularly irregular.' },
+      ]),
+      correctDiagnosis: 'Atrial Fibrillation with Rapid Ventricular Response (First Episode)',
+      diagnosisExplanation: 'The ECG is diagnostic: irregularly irregular rhythm with absent P waves and narrow QRS at rate 142. The patient is hemodynamically stable. Initial management is rate control with IV diltiazem or metoprolol, then transition to oral rate control. Given symptom onset within 48 hours and structurally normal heart, rhythm control is an option. Long-term management requires CHA2DS2-VASc scoring for anticoagulation decision (this patient scores ≥3, indicating anticoagulation).',
+      teachingPoints: 'Key teaching points: (1) AFib is the most common sustained arrhythmia. (2) ECG hallmarks: irregularly irregular R-R intervals, no P waves, fibrillatory baseline. (3) Hemodynamic instability → immediate synchronized cardioversion. (4) Stable AFib with RVR: rate control first (IV diltiazem or metoprolol; target HR <110). (5) Onset <48h: consider rhythm control. (6) Onset >48h or unknown: rate control + anticoagulate 3 weeks before cardioversion (or TEE). (7) CHA2DS2-VASc scoring. (8) DOACs preferred over warfarin in non-valvular AF. (9) HAS-BLED quantifies bleeding risk.',
+      redFlags: 'Hypotension + chest pain + AFib RVR: immediate synchronized cardioversion. AFib + WPW (wide QRS, irregular): avoid AV nodal blockers; use procainamide. New AFib: check TSH to rule out hyperthyroidism.',
+      xpReward: 80,
+      disciplineSlug: 'cardiology',
+    },
+    {
+      slug: 'case-pna-72m',
+      title: 'Cough, Fever, and Confusion in a 72-Year-Old Man',
+      chiefComplaint: '3 days of productive cough, fever, and increasing confusion',
+      specialty: 'Pulmonology',
+      difficulty: 'EASY',
+      organSystem: 'Respiratory',
+      briefImage: '/medivault/case-cxr.png',
+      presentation: 'A 72-year-old man is brought from a nursing home with 3 days of productive cough with yellow sputum, fever to 38.9°C, progressive dyspnea, and confusion starting today. He has COPD, type 2 diabetes, and stage 3 CKD.',
+      history: 'Nursing home resident. Symptoms began 3 days ago. Vaccinations: influenza this year; pneumococcal (PCV13 5 years ago). Medications: Trelegy, metformin, lisinopril, insulin glargine. Allergies: penicillin (rash).',
+      exam: 'BP 92/58, HR 108, RR 28, SpO2 88% on room air, T 38.7°C. General: ill-appearing, somnolent. Lungs: crackles right lower lobe, distant wheeze bilaterally. Heart: tachycardic. Neuro: somnolent, oriented to person only.',
+      orders: JSON.stringify([
+        { name: 'Chest X-ray', turnaround: '20 min', result: 'Right lower lobe consolidation with air bronchograms; no pleural effusion', interpretation: 'Right lower lobe pneumonia — likely bacterial' },
+        { name: 'CBC with differential', turnaround: '30 min', result: 'WBC 18.5 with 12% bands, Hgb 12.1, platelets 220', interpretation: 'Leukocytosis with left shift — bacterial infection' },
+        { name: 'Basic metabolic panel', turnaround: '30 min', result: 'Na 132, K 4.0, Cr 1.6 (baseline 1.2), glucose 196, BUN 28, lactate 2.8', interpretation: 'AKI on CKD; hyperglycemia from infection; lactate mildly elevated — early sepsis' },
+        { name: 'Blood cultures x2', turnaround: 'Pending 48h', result: 'Sent before antibiotics', interpretation: 'Always draw before first antibiotic dose if possible' },
+        { name: 'Arterial blood gas', turnaround: '15 min', result: 'pH 7.42, PaCO2 32, PaO2 58, HCO3 21', interpretation: 'Mild hypoxemia with respiratory alkalosis — supplemental oxygen needed' },
+      ]),
+      differentials: JSON.stringify([
+        { diagnosis: 'Community-acquired pneumonia with sepsis (CURB-65 ≥3)', isCorrect: true, explanation: 'Productive cough + fever + RLL consolidation on CXR + leukocytosis with left shift = bacterial CAP. Confusion + elevated BUN + tachycardia + hypotension + lactate = sepsis. CURB-65 = 4 (confusion, BUN >19, RR ≥30, BP <90/60).' },
+        { diagnosis: 'Aspiration pneumonia', isCorrect: false, explanation: 'Nursing home residents at risk; without clear aspiration history, treat as CAP. Anaerobic coverage reasonable.' },
+        { diagnosis: 'Acute bronchitis', isCorrect: false, explanation: 'Bronchitis is infection of larger airways without radiographic consolidation.' },
+        { diagnosis: 'Pulmonary embolism', isCorrect: false, explanation: 'PE can cause dyspnea, tachycardia, hypoxia. But fever, productive cough, and RLL consolidation point to pneumonia.' },
+        { diagnosis: 'COPD exacerbation', isCorrect: false, explanation: 'Patient has COPD but the prominent fever, consolidation on CXR, and confusion are not typical of pure COPD exacerbation. This is pneumonia triggering a COPD exacerbation.' },
+      ]),
+      correctDiagnosis: 'Severe Community-Acquired Pneumonia with Sepsis (CURB-65 = 4)',
+      diagnosisExplanation: 'The classic presentation of CAP — productive cough, fever, crackles, leukocytosis with left shift, and lobar consolidation on CXR — is present. The patient meets Sepsis-3 criteria. CURB-65 = 4-5 indicates severe pneumonia requiring inpatient management, likely ICU. Empiric therapy: ceftriaxone + azithromycin (penicillin allergy: ceftriaxone has low cross-reactivity with cephalosporins).',
+      teachingPoints: 'Key teaching points: (1) CAP diagnosis: symptoms + CXR consolidation. (2) CURB-65 (Confusion, BUN >19, RR ≥30, BP <90/60, Age ≥65) — score 0-1 outpatient, 2 inpatient, ≥3 ICU consider. (3) Sepsis-3: suspected infection + SOFA ≥2 — start sepsis bundle. (4) Empiric CAP antibiotics — outpatient healthy: amoxicillin or doxycycline; inpatient: ceftriaxone + azithromycin. (5) Antibiotic duration: 5-7 days for uncomplicated CAP (STOP-IT trial). (6) Vaccinations: pneumococcal, influenza, COVID-19. (7) Steroids: reduce mortality in severe CAP (CAPO meta-analysis). (8) Discharge: follow-up CXR in 6-8 weeks to exclude underlying malignancy.',
+      redFlags: 'Hypotension + lactate >2: sepsis — start bundle within 1h. SpO2 <92%: supplemental oxygen. Worsening despite 48h antibiotics: re-evaluate.',
+      xpReward: 100,
+      disciplineSlug: 'pulmonology',
+    },
+    {
+      slug: 'case-htn-emergency-58f',
+      title: 'Severe Headache and Blurry Vision in a 58-Year-Old Woman',
+      chiefComplaint: 'Severe headache, blurry vision, and confusion',
+      specialty: 'Nephrology',
+      difficulty: 'MEDIUM',
+      organSystem: 'Cardiovascular',
+      briefImage: '/medivault/disc-nephrology.png',
+      presentation: 'A 58-year-old woman is brought to the ED with 6 hours of severe headache, blurry vision, nausea, and confusion. She has a history of untreated hypertension (lost to follow-up 2 years ago, BP was 170/100). She has been taking OTC ibuprofen for back pain.',
+      history: 'BP has been "high" for years but she stopped her medications 1 year ago due to cost. No prior stroke, no MI, no diabetes. Current medications: none. Social: smokes 1 ppd, occasional alcohol.',
+      exam: 'BP 218/124 (both arms), HR 96, RR 18, SpO2 96%. General: alert but slow to respond. Eyes: papilledema on fundoscopy. Heart: S1 S2, S4 gallop. Abdomen: soft, epigastric bruit audible. Neuro: oriented to person, slow responses, no focal deficits.',
+      orders: JSON.stringify([
+        { name: 'Basic metabolic panel', turnaround: '30 min', result: 'Na 138, K 4.0, Cr 1.4 (no baseline), BUN 32, glucose 105', interpretation: 'Mild AKI from nephrosclerosis' },
+        { name: 'CBC', turnaround: '30 min', result: 'WBC 9.2, Hgb 13.1, platelets 220', interpretation: 'No MAHA — not TTP-HUS' },
+        { name: 'EKG', turnaround: 'Immediate', result: 'Sinus rhythm, LVH with strain pattern (Sokolow-Lyon criteria), no acute ischemia', interpretation: 'Chronic hypertensive heart disease' },
+        { name: 'Chest X-ray', turnaround: '20 min', result: 'Cardiomegaly, no pulmonary edema', interpretation: 'No acute heart failure' },
+        { name: 'Head CT non-contrast', turnaround: '15 min', result: 'No hemorrhage, no mass, no midline shift; chronic white matter changes', interpretation: 'No acute intracranial process; symptoms from hypertensive encephalopathy' },
+      ]),
+      differentials: JSON.stringify([
+        { diagnosis: 'Hypertensive emergency with encephalopathy', isCorrect: true, explanation: 'Severe BP (218/124) + end-organ damage (encephalopathy, papilledema, AKI) = hypertensive emergency. Requires IV antihypertensive therapy.' },
+        { diagnosis: 'Hypertensive urgency', isCorrect: false, explanation: 'Urgency = severe BP without end-organ damage. This patient has encephalopathy, papilledema, and AKI.' },
+        { diagnosis: 'Ischemic stroke', isCorrect: false, explanation: 'Head CT shows no acute infarct. Patient has no focal deficits. Symptoms are from hypertensive encephalopathy.' },
+        { diagnosis: 'Subarachnoid hemorrhage', isCorrect: false, explanation: 'SAH causes sudden "worst headache of life." This headache is severe but gradual. CT would show subarachnoid blood.' },
+        { diagnosis: 'Cocaine-induced hypertensive crisis', isCorrect: false, explanation: 'Cocaine can cause severe HTN. This patient has negative tox screen.' },
+      ]),
+      correctDiagnosis: 'Hypertensive Emergency with Hypertensive Encephalopathy',
+      diagnosisExplanation: 'BP 218/124 with acute end-organ damage (encephalopathy, papilledema, AKI) meets criteria for hypertensive emergency. Head CT excludes stroke and hemorrhage. The patient requires immediate IV antihypertensive therapy in a monitored setting. Goal: reduce MAP by 10-20% in the first hour, then to 160/100 mmHg within 2-6 hours. First-line agents: nicardipine IV, labetalol IV, or clevidipine. Avoid sublingual nifedipine (precipitous drop).',
+      teachingPoints: 'Key teaching points: (1) Hypertensive emergency = severe BP + acute end-organ damage. Requires IV therapy. (2) Hypertensive urgency = severe BP without end-organ damage — oral therapy. (3) Reduce MAP by 10-20% in first hour, then 160/100 over 2-6h. (4) IV agents of choice: nicardipine, labetalol, clevidipine, esmolol. (5) Sublingual nifedipine is contraindicated. (6) Specific scenarios: aortic dissection (esmolol first); eclampsia (IV magnesium, hydralazine); pheochromocytoma (phentolamine). (7) Always investigate secondary causes. (8) Long-term: combination therapy, lifestyle.',
+      redFlags: 'Severe BP + neurological symptoms: hypertensive encephalopathy — IV therapy. New severe headache with BP elevation: rule out SAH (CT, LP). Chest/back pain + BP differential: aortic dissection — CT angiography. Pregnancy >20 weeks with seizure: eclampsia — magnesium sulfate.',
+      xpReward: 140,
+      disciplineSlug: 'nephrology',
+    },
+    {
+      slug: 'case-meningitis-22m',
+      title: 'Fever, Headache, and Stiff Neck in a 22-Year-Old Man',
+      chiefComplaint: '1 day of fever, severe headache, neck stiffness, photophobia',
+      specialty: 'Neurology',
+      difficulty: 'HARD',
+      organSystem: 'Neurological',
+      briefImage: '/medivault/disc-neurology.png',
+      presentation: 'A 22-year-old college student presents with 12 hours of fever to 39.4°C, severe headache, neck stiffness, and photophobia. He has had nausea and one episode of vomiting. His roommate reports he seemed confused this morning.',
+      history: 'Otherwise healthy. Vaccinations: meningococcal at age 12, no booster. No medications. Social: college junior, sexually active with one partner. Last meal yesterday evening.',
+      exam: 'BP 110/68, HR 110, RR 20, T 39.1°C, SpO2 97%. General: ill-appearing, lying still on stretcher. Neck: marked nuchal rigidity, positive Kernig and Brudzinski signs. Skin: scattered petechiae on lower extremities. Neuro: somnolent, oriented to person, no focal deficits.',
+      orders: JSON.stringify([
+        { name: 'CT head (before LP)', turnaround: '20 min', result: 'Normal — no mass, no shift, no hydrocephalus', interpretation: 'Safe to perform lumbar puncture' },
+        { name: 'Lumbar puncture with CSF analysis', turnaround: '1 hour', result: 'Opening pressure 22 cm H2O; CSF: 1200 WBCs (85% PMN), glucose 18 (serum 110), protein 180; Gram stain: Gram-negative diplococci', interpretation: 'Bacterial meningitis — Neisseria meningitidis suspected' },
+        { name: 'CBC with differential', turnaround: '30 min', result: 'WBC 22.5 with 15% bands, Hgb 14.2, platelets 180', interpretation: 'Marked leukocytosis with left shift — severe bacterial infection' },
+        { name: 'PCR for meningitis/encephalitis panel', turnaround: '4 hours', result: 'Positive for Neisseria meningitidis', interpretation: 'Confirms meningococcal meningitis' },
+      ]),
+      differentials: JSON.stringify([
+        { diagnosis: 'Bacterial meningitis (Neisseria meningitidis)', isCorrect: true, explanation: 'Classic triad of fever, neck stiffness, altered mental status + CSF with high PMN count, low glucose, high protein, Gram-negative diplococci. Petechiae strongly suggest meningococcemia.' },
+        { diagnosis: 'Viral meningitis', isCorrect: false, explanation: 'Viral meningitis typically has lymphocytic predominance, normal glucose, mild protein elevation.' },
+        { diagnosis: 'Viral encephalitis (HSV)', isCorrect: false, explanation: 'Encephalitis features prominent brain dysfunction more than meningeal signs. CSF in HSV often has RBCs.' },
+        { diagnosis: 'Subarachnoid hemorrhage', isCorrect: false, explanation: 'SAH causes sudden "thunderclap" headache; meningeal signs develop over hours; CSF would be xanthochromic with RBCs.' },
+        { diagnosis: 'Brain abscess', isCorrect: false, explanation: 'Brain abscess causes headache, fever, focal deficits; often insidious. CT shows ring-enhancing lesion.' },
+      ]),
+      correctDiagnosis: 'Bacterial Meningitis — Neisseria meningitidis with Meningococcemia',
+      diagnosisExplanation: 'The clinical triad (fever, neck stiffness, altered mental status), petechial rash, and CSF findings (PMN pleocytosis, low glucose, high protein, Gram-negative diplococci) are diagnostic of meningococcal meningitis. The PCR confirmation and CSF Gram stain make N. meningitidis the clear causative organism. This is a medical emergency requiring immediate empiric antibiotics (ceftriaxone + vancomycin + dexamethasone) and droplet precautions.',
+      teachingPoints: 'Key teaching points: (1) Classic triad: fever, neck stiffness, altered mental status. (2) Petechial rash = meningococcemia until proven otherwise. (3) Empiric antibiotics within 1 hour — do NOT delay for CT or LP. (4) Empiric therapy: ceftriaxone 2g IV q12h + vancomycin + dexamethasone. Add ampicillin if >50y or immunocompromised (Listeria). (5) CT before LP if: immunocompromised, new seizure, focal deficits, papilledema, altered mental status. (6) CSF in bacterial meningitis: high opening pressure, >1000 WBCs PMN, glucose <40, protein >100, positive Gram stain. (7) Dexamethasone reduces mortality in S. pneumoniae meningitis. (8) Droplet precautions for 24h after starting antibiotics. (9) Chemoprophylaxis for close contacts. (10) Vaccination: MenACWY at 11-12y with booster at 16y.',
+      redFlags: 'Fever + altered mental status + neck stiffness: bacterial meningitis until proven otherwise. Petechial rash: meningococcemia. Rapid clinical deterioration: adrenal hemorrhage (Waterhouse-Friderichsen), DIC.',
+      xpReward: 200,
+      disciplineSlug: 'neurology',
+    },
+    {
+      slug: 'case-ugi-bleed-60m',
+      title: 'Coffee-Ground Emesis in a 60-Year-Old Man',
+      chiefComplaint: '2 episodes of coffee-ground emesis, lightheadedness',
+      specialty: 'Gastroenterology',
+      difficulty: 'MEDIUM',
+      organSystem: 'Gastrointestinal',
+      briefImage: '/medivault/disc-biochemistry.png',
+      presentation: 'A 60-year-old man presents after 2 episodes of coffee-ground emesis over 6 hours, with lightheadedness and dark stools. He has osteoarthritis and takes ibuprofen 600 mg three times daily. He drinks 4-6 beers daily.',
+      history: 'No prior GI bleeding. Stools dark and tarry for past 2 days. Medications: ibuprofen 600 mg TID, no anticoagulants. Social: 4-6 beers daily, smoker 1 ppd x 30 years. Father had "stomach ulcer."',
+      exam: 'BP 100/68 supine, 88/56 standing; HR 108 supine, 124 standing. General: pale, diaphoretic. Heart: tachycardic. Abdomen: soft, mild epigastric tenderness. Rectal: dark melena.',
+      orders: JSON.stringify([
+        { name: 'CBC', turnaround: '30 min', result: 'Hgb 7.8 (baseline 14), Hct 23%, platelets 220, MCV 88', interpretation: 'Acute upper GI bleeding with significant hemoglobin drop' },
+        { name: 'Type and crossmatch', turnaround: '45 min', result: '2 units packed RBCs crossmatched', interpretation: 'Ready for transfusion if needed' },
+        { name: 'Basic metabolic panel, LFTs, coagulation', turnaround: '30 min', result: 'Na 138, K 4.5, Cr 1.1, BUN 38 (BUN/Cr >30 suggests UGIB), INR 1.1, normal LFTs', interpretation: 'Elevated BUN/Cr ratio supports upper GI source; no coagulopathy; no liver disease' },
+        { name: 'ECG', turnaround: 'Immediate', result: 'Sinus tachycardia, no acute ischemic changes', interpretation: 'Tachycardia from hypovolemia' },
+        { name: 'Nasogastric lavage', turnaround: 'Immediate', result: 'Coffee-ground aspirate, cleared with saline', interpretation: 'Confirms upper GI bleeding' },
+      ]),
+      differentials: JSON.stringify([
+        { diagnosis: 'Upper GI bleed from NSAID-induced peptic ulcer disease', isCorrect: true, explanation: 'Heavy NSAID use, coffee-ground emesis, melena, epigastric tenderness, BUN/Cr ratio >30, no liver disease — most likely NSAID-induced gastric/duodenal ulcer.' },
+        { diagnosis: 'Esophageal variceal bleeding from alcoholic cirrhosis', isCorrect: false, explanation: 'Patient drinks 4-6 beers daily. But LFTs normal, no stigmata of chronic liver disease. Varices typically cause massive hematemesis.' },
+        { diagnosis: 'Mallory-Weiss tear', isCorrect: false, explanation: 'Mallory-Weiss is mucosal tear at GE junction from retching. No prior vomiting in this case.' },
+        { diagnosis: 'Gastric cancer', isCorrect: false, explanation: 'Can cause UGIB but typically with weight loss, early satiety. Acute presentation with NSAID use favors PUD.' },
+        { diagnosis: 'Lower GI bleeding', isCorrect: false, explanation: 'LGIB typically presents with hematochezia, not melena. BUN/Cr ratio >30 supports upper source.' },
+      ]),
+      correctDiagnosis: 'Upper GI Bleed — NSAID-Induced Peptic Ulcer Disease',
+      diagnosisExplanation: 'The combination of heavy chronic NSAID use, coffee-ground emesis, melena, BUN/Cr ratio >30, and no signs of chronic liver disease strongly suggests an NSAID-induced peptic ulcer as the source of upper GI bleeding. Hemodynamic instability requires resuscitation with IV fluids and blood transfusion. IV proton pump inhibitor infusion (pantoprazole 80 mg bolus + 8 mg/h). EGD within 24 hours confirms diagnosis and allows therapeutic intervention.',
+      teachingPoints: 'Key teaching points: (1) Differentiate upper vs lower GI bleed: hematemesis or melena = upper; hematochezia = lower. (2) BUN/Cr ratio >30 suggests upper GI source. (3) Resuscitation first: 2 large-bore IVs, isotonic crystalloid, transfuse to Hgb >7. (4) IV PPI before EGD reduces high-risk ulcer findings. (5) Risk stratification: Glasgow-Blatchford Score (pre-endoscopy), Rockall Score (post-endoscopy). (6) Forrest classification guides endoscopic therapy. (7) Stop NSAIDs. H. pylori testing and eradication if positive. (8) Transfuse to Hgb 7 g/dL — restrictive strategy (TRICC trial). (9) Discharge: PPI BID x 4-8 weeks, H. pylori eradication if positive, avoid NSAIDs.',
+      redFlags: 'Hemodynamic instability: resuscitate immediately. Hematochezia with hemodynamic instability: presume massive upper GI bleed — urgent EGD. Coagulopathy or thrombocytopenia: correct before endoscopy.',
+      xpReward: 130,
+      disciplineSlug: 'biochemistry',
+    },
+  ]
+
+  for (const c of cases) {
+    const { disciplineSlug, ...caseData } = c
+    const discipline = disciplineSlug ? await db.discipline.findUnique({ where: { slug: disciplineSlug } }) : null
+    await db.clinicalCase.upsert({
+      where: { slug: c.slug },
+      update: { ...caseData, disciplineId: discipline?.id },
+      create: { ...caseData, disciplineId: discipline?.id },
+    })
+  }
+  console.log(`Seeded ${cases.length} clinical cases`)
+
+  console.log('Seed complete.')
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e)
+    process.exit(1)
+  })

@@ -1,0 +1,143 @@
+// MEDIVAULT — Prisma schema
+// Open-source medical education platform
+// No login: users get a permanent ID generated client-side (UUID v4)
+// and stored in localStorage with a recovery code.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Anonymous user identity (no email, no password)
+// Permanent ID assigned on first visit; recovery code lets them restore on a new device.
+model AnonUser {
+  id            String   @id @default(cuid())
+  publicId      String   @unique // 8-char display ID like MV-AB12CD34
+  recoveryCode  String   @unique // 12-char recovery code
+  displayName   String   @default("Anonymous Healer")
+  rank          String   @default("MEDICAL_STUDENT") // MEDICAL_STUDENT | INTERN | RESIDENT | ATTENDING | CHIEF
+  xp            Int      @default(0)
+  casesSolved   Int      @default(0)
+  booksRead     Int      @default(0)
+  topicsMastered Int     @default(0)
+  createdAt     DateTime @default(now())
+  lastSeenAt    DateTime @default(now())
+  progress      UserProgress[]
+  chatMessages  ChatMessage[]
+}
+
+// Tracks per-topic/per-case progress for a user
+model UserProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  user      AnonUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemType  String   // "TOPIC" | "CASE" | "BOOK"
+  itemId    String
+  status    String   @default("STARTED") // STARTED | COMPLETED | MASTERED
+  score     Int?
+  weakAreas String?  // JSON string of weak area tags
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, itemType, itemId])
+}
+
+// Global medical chat — single shared room, focused on teaching from mistakes
+model ChatMessage {
+  id         String   @id @default(cuid())
+  userId     String
+  user       AnonUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userPublicId String
+  userRank   String
+  userDisplayName String
+  content    String
+  topic      String?  // optional: tag a message with a topic like "cardiology" or "case-3"
+  isCaseDiscussion Boolean @default(false)
+  caseId     String?
+  isPinned   Boolean  @default(false) // pinned as "teaching moment"
+  isFlagged  Boolean  @default(false) // flagged as needing correction
+  correction String?  // optional correction text added by another user
+  createdAt  DateTime @default(now())
+}
+
+// Medical disciplines (Cardiology, Neurology, etc.)
+model Discipline {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  icon        String?
+  coverImage  String?
+  books       Book[]
+  topics      Topic[]
+  cases       ClinicalCase[]
+  createdAt   DateTime @default(now())
+}
+
+// Books — only public domain / openly licensed references
+model Book {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  author      String
+  year        String
+  license     String   // "Public Domain" | "CC BY 4.0" | "CC BY-SA 4.0"
+  licenseUrl  String?
+  sourceUrl   String   // link to the legal source
+  description String
+  coverImage  String?
+  disciplineId String?
+  discipline  Discipline? @relation(fields: [disciplineId], references: [id])
+  topics      Topic[]
+  createdAt   DateTime @default(now())
+}
+
+// Topics — atomic learning units, layered depth
+model Topic {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  disciplineId String?
+  discipline   Discipline? @relation(fields: [disciplineId], references: [id])
+  bookId       String?
+  book         Book?    @relation(fields: [bookId], references: [id])
+  tldr         String   // 1-line summary
+  overview     String   // ~120 words
+  fullExplanation String // ~500 words, may include markdown-like headings
+  deepDive     String?  // 1500+ words: pathophysiology, drugs, red flags, evidence
+  heroImage    String?
+  tags         String?  // JSON array
+  relatedTopicSlugs String? // JSON array of slugs
+  createdAt    DateTime @default(now())
+}
+
+// Clinical cases — interactive diagnostic practice
+model ClinicalCase {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  chiefComplaint String
+  specialty     String
+  difficulty    String   // EASY | MEDIUM | HARD
+  organSystem   String
+  briefImage    String?
+  presentation  String
+  history       String
+  exam          String
+  // JSON-encoded array of lab/imaging orders with name, turnaround, result, interpretation
+  orders        String
+  // JSON-encoded array of {diagnosis, isCorrect, explanation}
+  differentials String
+  correctDiagnosis String
+  diagnosisExplanation String
+  teachingPoints String   // what to learn from this case
+  redFlags      String?
+  xpReward      Int      @default(100)
+  disciplineId  String?
+  discipline    Discipline? @relation(fields: [disciplineId], references: [id])
+  createdAt     DateTime @default(now())
+}
