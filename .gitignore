@@ -31,24 +31,61 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env
+.env.local
+.env.*.local
+
+# Keep the example committed
+!.env.example
 
 # vercel
 .vercel
 
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Logs
+*.log
+dev.log
+server.log
+
+# Database files (SQLite — runtime data, not source)
+db/*.db
+db/*.db-journal
+db/*.db-wal
+db/*.db-shm
+
+# Sandbox / agent artifacts (local-only)
 local-*
 .claude
 .z-ai-config
-*.log
-dev.log
-dev.out.log
-test
+.zscripts
 prompt
+test
+worklog.md
 
-server.log
-# Skills directory
+# Verification screenshots (don't ship these)
+verify-*.png
+
+# Sandbox gateway config (specific to local dev sandbox)
+Caddyfile
+
+# Local download artifacts
+/download/
+
+# Local DB files (runtime data — should never be committed)
+db/*.db
+db/*.db-journal
+
+# Skills directory (local skill files)
 /skills/
+
+# OS files
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
