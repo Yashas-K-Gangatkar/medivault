@@ -11,6 +11,8 @@ interface Discipline {
   description: string
   coverImage: string | null
   books: Book[]
+  topics?: Topic[]
+  cases?: any[]
   _count?: { topics: number; cases: number }
 }
 
